@@ -25,9 +25,10 @@ Golf is addicting, but imporvement is non-linear. With professional instruction 
 
 ## Known Limitations
 - This app will have limits, the app cannot see the swing of the golfer, so it is relying on the players honesty and making assumptions about how well they can hit the ball.
+- The app currently feels a little generic.
 
 ## What's next
-- Refine prompts and output.
+- Refine prompts and output to be less generic and go beyond a basic llm chat.
 
 ## Tools used to build it
 - Lovable (for website building)

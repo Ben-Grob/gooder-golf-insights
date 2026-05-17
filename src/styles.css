@@ -140,5 +140,26 @@
   body {
     background-color: var(--color-background);
     color: var(--color-foreground);
+    font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  }
+
+  .font-serif {
+    font-family: "Cooper Black", "Playfair Display", Georgia, ui-serif, serif;
+    letter-spacing: -0.02em;
   }
 }
+
+.plan-content h1,
+.plan-content h2,
+.plan-content h3 {
+  font-family: "Cooper Black", "Playfair Display", Georgia, ui-serif, serif;
+  color: var(--color-primary);
+  letter-spacing: -0.01em;
+}
+.plan-content h2 { font-size: 1.35rem; margin-top: 1.5rem; }
+.plan-content h3 { font-size: 1.1rem; margin-top: 1.25rem; }
+.plan-content ul { list-style: disc; padding-left: 1.25rem; }
+.plan-content ol { list-style: decimal; padding-left: 1.25rem; }
+.plan-content li { margin: 0.35rem 0; }
+.plan-content strong { color: var(--color-primary); font-weight: 700; }
+.plan-content p { line-height: 1.6; }

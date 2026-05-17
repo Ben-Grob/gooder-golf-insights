@@ -140,7 +140,7 @@ function Index() {
               <div className="mb-4 text-xs font-medium uppercase tracking-widest text-accent-foreground/70">
                 Your Practice Plan
               </div>
-              <article className="prose prose-sm max-w-none prose-headings:font-serif prose-headings:text-primary prose-strong:text-primary prose-p:text-foreground prose-li:text-foreground sm:prose-base">
+              <article className="plan-content space-y-4 text-foreground">
                 <ReactMarkdown>{plan}</ReactMarkdown>
               </article>
             </div>

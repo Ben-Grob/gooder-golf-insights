@@ -72,14 +72,18 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Lovable App" },
-      { name: "description", content: "Lovable Generated Project" },
+      { title: "Gooder Golf" },
+      { name: "description", content: "Gooder Golf Insights is a web app that generates personalized golf practice plans based on your round." },
       { name: "author", content: "Lovable" },
-      { property: "og:title", content: "Lovable App" },
-      { property: "og:description", content: "Lovable Generated Project" },
+      { property: "og:title", content: "Gooder Golf" },
+      { property: "og:description", content: "Gooder Golf Insights is a web app that generates personalized golf practice plans based on your round." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
       { name: "twitter:site", content: "@Lovable" },
+      { name: "twitter:title", content: "Gooder Golf" },
+      { name: "twitter:description", content: "Gooder Golf Insights is a web app that generates personalized golf practice plans based on your round." },
+      { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/bb11f970-bce1-4fe6-9340-eaa9f8596e20/id-preview-fbab20fd--484514f7-35ad-40ff-9272-f2fbebd307c6.lovable.app-1779054973556.png" },
+      { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/bb11f970-bce1-4fe6-9340-eaa9f8596e20/id-preview-fbab20fd--484514f7-35ad-40ff-9272-f2fbebd307c6.lovable.app-1779054973556.png" },
     ],
     links: [
       {

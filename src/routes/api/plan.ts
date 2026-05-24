@@ -1,5 +1,6 @@
 import "@tanstack/react-start";
 import { createFileRoute } from "@tanstack/react-router";
+import { GOLF_KNOWLEDGE_BASE } from "../../lib/golf-knowledge-base";
 
 type Body = {
   score?: string;
@@ -53,7 +54,22 @@ Rules:
 - Never suggest more than one swing fix. More is not better.
 - Always tie physical practice back to the mental game. The goal is integration, not mechanics.
 - Keep your tone like a trusted caddie: direct, calm, encouraging without being sycophantic.
-- If the golfer describes getting in their own head, always address that before addressing swing mechanics.`;
+- If the golfer describes getting in their own head, always address that before addressing swing mechanics.
+
+---
+
+## REFERENCE MATERIAL: Golf Knowledge Base
+
+${GOLF_KNOWLEDGE_BASE}
+
+---
+
+When providing advice:
+- Prioritize guidance from the knowledge base above
+- Refer to specific quotes and principles when relevant
+- Follow the Feedback Structure outlined in the knowledge base
+- Emphasize high-ROI improvements (short game, mental resilience)
+- Make recommendations achievable within one week of practice`;
 
         const res = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
           method: "POST",

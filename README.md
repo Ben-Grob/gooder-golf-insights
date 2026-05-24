@@ -22,6 +22,7 @@ Golf is addicting, but imporvement is non-linear. With professional instruction 
 ## Evaluation
   - Good for this project will give users a relevant and feasible practice plan that doesn't look to reinvent the wheel.
   - Scores can be given by users on a scale from 1-5, and reply with wheather or not they will use the feedback.
+        *Evaluations can be viewed in the evaluations folder.*
 
 ## Known Limitations
 - This app will have limits, the app cannot see the swing of the golfer, so it is relying on the players honesty and making assumptions about how well they can hit the ball.
@@ -32,6 +33,7 @@ Golf is addicting, but imporvement is non-linear. With professional instruction 
 
 ## Tools used to build it
 - Lovable (for website building)
+- Copilot (for specific changes and iteration)
 - Claude (for prompt building and planning)
 - Gemeni (for general torubleshooting information)
 

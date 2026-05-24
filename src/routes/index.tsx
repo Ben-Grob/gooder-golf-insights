@@ -70,6 +70,8 @@ function Index() {
       }
       const data = (await res.json()) as { plan: string };
       setPlan(data.plan);
+      // Scroll to top when plan is generated
+      window.scrollTo({ top: 0, behavior: "smooth" });
     } catch (err) {
       setError(err instanceof Error ? err.message : "Something went wrong.");
     } finally {
@@ -129,7 +131,7 @@ function Index() {
                   value={form[q.key]}
                   onChange={(e) => setForm({ ...form, [q.key]: e.target.value })}
                   placeholder={q.placeholder}
-                  className="mt-4 w-full resize-none rounded-lg border border-input bg-background px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground/70 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
+                  className="mt-4 w-full resize-none rounded-lg border border-input bg-background px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground/70 focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary/20"
                 />
               </div>
             ))}
@@ -143,7 +145,7 @@ function Index() {
             <button
               type="submit"
               disabled={loading}
-              className="group relative w-full overflow-hidden rounded-xl bg-primary px-6 py-4 text-base font-semibold text-primary-foreground shadow-lg shadow-primary/20 transition hover:shadow-xl hover:shadow-primary/30 disabled:opacity-60"
+              className="group relative w-full overflow-hidden rounded-xl bg-primary px-6 py-4 text-base font-semibold text-primary-foreground shadow-lg shadow-primary/20 transition hover:shadow-xl hover:shadow-primary/30 disabled:opacity-75"
             >
               {loading ? "Building your plan…" : "Get My Practice Plan →"}
             </button>

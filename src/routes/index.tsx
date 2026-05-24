@@ -228,7 +228,7 @@ function Index() {
 
               {evaluationSubmitted && (
                 <p className="mt-3 text-center text-sm text-green-600">
-                  Thanks for the feedback! 🙌
+                  Feedback Submitted
                 </p>
               )}
             </div>

@@ -44,6 +44,8 @@ function Index() {
   const [plan, setPlan] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [evaluation, setEvaluation] = useState({ usefulness: 0, willUse: null as boolean | null });
+  const [evaluationSubmitted, setEvaluationSubmitted] = useState(false);
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -75,9 +77,23 @@ function Index() {
     }
   };
 
+  const submitEvaluation = () => {
+    // Log to browser console for manual review
+    console.log("Evaluation submitted:", {
+      usefulness: evaluation.usefulness,
+      willUse: evaluation.willUse,
+      timestamp: new Date().toISOString(),
+    });
+    
+    setEvaluationSubmitted(true);
+    setTimeout(() => setEvaluationSubmitted(false), 3000);
+  };
+
   const reset = () => {
     setPlan(null);
     setForm({ score: "", pattern: "", thoughts: "", response: "" });
+    setEvaluation({ usefulness: 0, willUse: null });
+    setEvaluationSubmitted(false);
   };
 
   return (
@@ -144,6 +160,79 @@ function Index() {
                 <ReactMarkdown>{plan}</ReactMarkdown>
               </article>
             </div>
+
+            {/* Evaluation Form */}
+            <div className="rounded-2xl border border-border bg-card p-6 shadow-sm">
+              <h3 className="mb-6 text-base font-semibold text-card-foreground">
+                How useful was this plan?
+              </h3>
+
+              {/* Rating 1-5 */}
+              <div className="mb-8">
+                <label className="mb-3 block text-sm font-medium text-muted-foreground">
+                  Rate the usefulness (1 = not useful, 5 = very useful)
+                </label>
+                <div className="flex gap-2">
+                  {[1, 2, 3, 4, 5].map((rating) => (
+                    <button
+                      key={rating}
+                      type="button"
+                      onClick={() => setEvaluation({ ...evaluation, usefulness: rating })}
+                      className={`h-11 w-11 rounded-lg font-semibold transition ${
+                        evaluation.usefulness === rating
+                          ? "bg-primary text-primary-foreground shadow-lg"
+                          : "border border-border bg-background text-muted-foreground hover:bg-secondary"
+                      }`}
+                    >
+                      {rating}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Will You Use It? */}
+              <div className="mb-8">
+                <label className="mb-3 block text-sm font-medium text-muted-foreground">
+                  Will you use this advice in your next practice session?
+                </label>
+                <div className="flex gap-3">
+                  {[
+                    { value: true, label: "Yes" },
+                    { value: false, label: "No" },
+                  ].map(({ value, label }) => (
+                    <button
+                      key={label}
+                      type="button"
+                      onClick={() => setEvaluation({ ...evaluation, willUse: value })}
+                      className={`flex-1 rounded-lg border px-4 py-3 font-medium transition ${
+                        evaluation.willUse === value
+                          ? "border-primary bg-primary text-primary-foreground"
+                          : "border-border bg-background text-foreground hover:bg-secondary"
+                      }`}
+                    >
+                      {label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Submit Evaluation */}
+              <button
+                type="button"
+                onClick={submitEvaluation}
+                disabled={evaluation.usefulness === 0 || evaluation.willUse === null}
+                className="w-full rounded-lg bg-primary px-4 py-3 font-semibold text-primary-foreground transition hover:shadow-lg disabled:opacity-50"
+              >
+                Submit Feedback
+              </button>
+
+              {evaluationSubmitted && (
+                <p className="mt-3 text-center text-sm text-green-600">
+                  Thanks for the feedback! 🙌
+                </p>
+              )}
+            </div>
+
             <button
               onClick={reset}
               className="w-full rounded-xl border border-border bg-card px-6 py-3 text-sm font-semibold text-foreground transition hover:bg-secondary"

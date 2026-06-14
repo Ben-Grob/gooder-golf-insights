@@ -170,7 +170,7 @@ function Index() {
                   />
                 </div>
 
-                <div className="grid grid-cols-2 gap-4 sm:grid-cols-3">
+                <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
                   <div>
                     <label className="mb-1.5 block text-sm font-medium text-muted-foreground">
                       Total score
@@ -199,7 +199,21 @@ function Index() {
                       className={statInputClass}
                     />
                   </div>
-                  <div className="col-span-2 sm:col-span-1">
+                  <div>
+                    <label className="mb-1.5 block text-sm font-medium text-muted-foreground">
+                      Handicap
+                    </label>
+                    <input
+                      type="number"
+                      min={0}
+                      step={0.1}
+                      value={form.handicap}
+                      onChange={(e) => updateField("handicap", e.target.value)}
+                      placeholder="12.4"
+                      className={statInputClass}
+                    />
+                  </div>
+                  <div>
                     <label className="mb-1.5 block text-sm font-medium text-muted-foreground">
                       Greens in regulation
                     </label>

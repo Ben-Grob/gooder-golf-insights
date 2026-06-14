@@ -6,6 +6,7 @@ type Body = {
   courseName?: string;
   totalScore?: string;
   coursePar?: string;
+  handicap?: string;
   fairwaysHit?: string;
   fairwaysAvailable?: string;
   greensInRegulation?: string;

@@ -6,6 +6,7 @@ type Body = {
   courseName?: string;
   totalScore?: string;
   coursePar?: string;
+  handicap?: string;
   fairwaysHit?: string;
   fairwaysAvailable?: string;
   greensInRegulation?: string;
@@ -28,6 +29,7 @@ export const Route = createFileRoute("/api/plan")({
         const stats = [
           `Course: ${body.courseName || "(not provided)"}`,
           `Score: ${body.totalScore || "?"} / Par ${body.coursePar || "72"}`,
+          `Handicap: ${body.handicap || "(not provided)"}`,
           `Fairways: ${body.fairwaysHit || "?"} / ${body.fairwaysAvailable || "?"}`,
           `Greens in regulation: ${body.greensInRegulation || "?"}`,
           `Total putts: ${body.totalPutts || "?"}`,
@@ -39,7 +41,7 @@ ${stats}
 
 Here is their mental debrief:
 
-1. Score vs normal game: ${body.score || "(none)"}
+1. How the round felt vs what the score shows: ${body.score || "(none)"}
 2. Bad shot patterns / where they happened: ${body.pattern || "(none)"}
 3. Thoughts on worst shots: ${body.thoughts || "(none)"}
 4. Mental response after a bad shot: ${body.response || "(none)"}

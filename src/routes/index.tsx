@@ -19,8 +19,8 @@ export const Route = createFileRoute("/")({
 const REFLECTIONS: { key: "score" | "pattern" | "thoughts" | "response"; label: string; placeholder: string }[] = [
   {
     key: "score",
-    label: "How did you score relative to your normal game?",
-    placeholder: "e.g. Shot 88, usually around 82. Front nine was solid, back nine fell apart.",
+    label: "How did the round feel? Did you play better or worse than the score shows?",
+    placeholder: "e.g. I struck the ball well but three-putted four times. The 88 felt like a 78 that got away from me.",
   },
   {
     key: "pattern",
@@ -43,6 +43,7 @@ type FormState = {
   courseName: string;
   totalScore: string;
   coursePar: string;
+  handicap: string;
   fairwaysHit: string;
   fairwaysAvailable: string;
   greensInRegulation: string;
@@ -57,6 +58,7 @@ const INITIAL_FORM: FormState = {
   courseName: "",
   totalScore: "",
   coursePar: "72",
+  handicap: "",
   fairwaysHit: "",
   fairwaysAvailable: "",
   greensInRegulation: "",
@@ -168,7 +170,7 @@ function Index() {
                   />
                 </div>
 
-                <div className="grid grid-cols-2 gap-4 sm:grid-cols-3">
+                <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
                   <div>
                     <label className="mb-1.5 block text-sm font-medium text-muted-foreground">
                       Total score
@@ -197,7 +199,21 @@ function Index() {
                       className={statInputClass}
                     />
                   </div>
-                  <div className="col-span-2 sm:col-span-1">
+                  <div>
+                    <label className="mb-1.5 block text-sm font-medium text-muted-foreground">
+                      Handicap
+                    </label>
+                    <input
+                      type="number"
+                      min={0}
+                      step={0.1}
+                      value={form.handicap}
+                      onChange={(e) => updateField("handicap", e.target.value)}
+                      placeholder="12.4"
+                      className={statInputClass}
+                    />
+                  </div>
+                  <div>
                     <label className="mb-1.5 block text-sm font-medium text-muted-foreground">
                       Greens in regulation
                     </label>

@@ -16,7 +16,7 @@ export const Route = createFileRoute("/")({
   }),
 });
 
-const QUESTIONS: { key: "score" | "pattern" | "thoughts" | "response"; label: string; placeholder: string }[] = [
+const REFLECTIONS: { key: "score" | "pattern" | "thoughts" | "response"; label: string; placeholder: string }[] = [
   {
     key: "score",
     label: "How did you score relative to your normal game?",
@@ -39,13 +39,45 @@ const QUESTIONS: { key: "score" | "pattern" | "thoughts" | "response"; label: st
   },
 ];
 
+type FormState = {
+  courseName: string;
+  totalScore: string;
+  coursePar: string;
+  fairwaysHit: string;
+  fairwaysAvailable: string;
+  greensInRegulation: string;
+  totalPutts: string;
+  score: string;
+  pattern: string;
+  thoughts: string;
+  response: string;
+};
+
+const INITIAL_FORM: FormState = {
+  courseName: "",
+  totalScore: "",
+  coursePar: "72",
+  fairwaysHit: "",
+  fairwaysAvailable: "",
+  greensInRegulation: "",
+  totalPutts: "",
+  score: "",
+  pattern: "",
+  thoughts: "",
+  response: "",
+};
+
 function Index() {
-  const [form, setForm] = useState({ score: "", pattern: "", thoughts: "", response: "" });
+  const [form, setForm] = useState<FormState>(INITIAL_FORM);
   const [plan, setPlan] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [evaluation, setEvaluation] = useState({ usefulness: 0, willUse: null as boolean | null });
   const [evaluationSubmitted, setEvaluationSubmitted] = useState(false);
+
+  const updateField = (key: keyof FormState, value: string) => {
+    setForm((prev) => ({ ...prev, [key]: value }));
+  };
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -70,7 +102,6 @@ function Index() {
       }
       const data = (await res.json()) as { plan: string };
       setPlan(data.plan);
-      // Scroll to top when plan is generated
       window.scrollTo({ top: 0, behavior: "smooth" });
     } catch (err) {
       setError(err instanceof Error ? err.message : "Something went wrong.");
@@ -80,23 +111,25 @@ function Index() {
   };
 
   const submitEvaluation = () => {
-    // Log to browser console for manual review
     console.log("Evaluation submitted:", {
       usefulness: evaluation.usefulness,
       willUse: evaluation.willUse,
       timestamp: new Date().toISOString(),
     });
-    
+
     setEvaluationSubmitted(true);
     setTimeout(() => setEvaluationSubmitted(false), 3000);
   };
 
   const reset = () => {
     setPlan(null);
-    setForm({ score: "", pattern: "", thoughts: "", response: "" });
+    setForm(INITIAL_FORM);
     setEvaluation({ usefulness: 0, willUse: null });
     setEvaluationSubmitted(false);
   };
+
+  const statInputClass =
+    "w-full rounded-lg border border-input bg-background px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground/70 focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary/20";
 
   return (
     <main className="min-h-screen bg-background text-foreground">
@@ -110,31 +143,144 @@ function Index() {
             Gooder Golf
           </h1>
           <p className="mt-4 max-w-xl text-base text-muted-foreground sm:text-lg">
-            You just walked off the 18th. Before the round fades, answer four honest questions —
+            You just walked off the 18th. Before the round fades, log the stats and reflect honestly —
             and get a practice plan built for the game you actually played today.
           </p>
         </header>
 
         {!plan && (
-          <form onSubmit={submit} className="space-y-8">
-            {QUESTIONS.map((q, i) => (
-              <div key={q.key} className="rounded-2xl border border-border bg-card p-6 shadow-sm">
-                <label className="flex items-start gap-3 text-base font-semibold text-card-foreground">
-                  <span className="mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-primary text-sm font-bold text-primary-foreground">
-                    {i + 1}
-                  </span>
-                  <span className="pt-0.5">{q.label}</span>
-                </label>
-                <textarea
-                  required
-                  rows={3}
-                  value={form[q.key]}
-                  onChange={(e) => setForm({ ...form, [q.key]: e.target.value })}
-                  placeholder={q.placeholder}
-                  className="mt-4 w-full resize-none rounded-lg border border-input bg-background px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground/70 focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary/20"
-                />
+          <form onSubmit={submit} className="space-y-10">
+            {/* Section 1 — Round Stats */}
+            <section className="rounded-2xl border border-border bg-card p-6 shadow-sm">
+              <h2 className="mb-6 text-lg font-semibold text-card-foreground">Round Stats</h2>
+              <div className="space-y-5">
+                <div>
+                  <label className="mb-1.5 block text-sm font-medium text-muted-foreground">
+                    Course name
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    value={form.courseName}
+                    onChange={(e) => updateField("courseName", e.target.value)}
+                    placeholder="e.g. Pebble Beach Golf Links"
+                    className={statInputClass}
+                  />
+                </div>
+
+                <div className="grid grid-cols-2 gap-4 sm:grid-cols-3">
+                  <div>
+                    <label className="mb-1.5 block text-sm font-medium text-muted-foreground">
+                      Total score
+                    </label>
+                    <input
+                      type="number"
+                      min={1}
+                      required
+                      value={form.totalScore}
+                      onChange={(e) => updateField("totalScore", e.target.value)}
+                      placeholder="88"
+                      className={statInputClass}
+                    />
+                  </div>
+                  <div>
+                    <label className="mb-1.5 block text-sm font-medium text-muted-foreground">
+                      Course par
+                    </label>
+                    <input
+                      type="number"
+                      min={1}
+                      required
+                      value={form.coursePar}
+                      onChange={(e) => updateField("coursePar", e.target.value)}
+                      placeholder="72"
+                      className={statInputClass}
+                    />
+                  </div>
+                  <div className="col-span-2 sm:col-span-1">
+                    <label className="mb-1.5 block text-sm font-medium text-muted-foreground">
+                      Greens in regulation
+                    </label>
+                    <input
+                      type="number"
+                      min={0}
+                      max={18}
+                      required
+                      value={form.greensInRegulation}
+                      onChange={(e) => updateField("greensInRegulation", e.target.value)}
+                      placeholder="8"
+                      className={statInputClass}
+                    />
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="mb-1.5 block text-sm font-medium text-muted-foreground">
+                      Fairways hit
+                    </label>
+                    <div className="flex items-center gap-2">
+                      <input
+                        type="number"
+                        min={0}
+                        required
+                        value={form.fairwaysHit}
+                        onChange={(e) => updateField("fairwaysHit", e.target.value)}
+                        placeholder="7"
+                        className={statInputClass}
+                      />
+                      <span className="text-sm text-muted-foreground">/</span>
+                      <input
+                        type="number"
+                        min={1}
+                        required
+                        value={form.fairwaysAvailable}
+                        onChange={(e) => updateField("fairwaysAvailable", e.target.value)}
+                        placeholder="14"
+                        className={statInputClass}
+                      />
+                    </div>
+                  </div>
+                  <div>
+                    <label className="mb-1.5 block text-sm font-medium text-muted-foreground">
+                      Total putts
+                    </label>
+                    <input
+                      type="number"
+                      min={0}
+                      required
+                      value={form.totalPutts}
+                      onChange={(e) => updateField("totalPutts", e.target.value)}
+                      placeholder="34"
+                      className={statInputClass}
+                    />
+                  </div>
+                </div>
               </div>
-            ))}
+            </section>
+
+            {/* Section 2 — Mental Reflection */}
+            <section className="space-y-6">
+              <h2 className="text-lg font-semibold text-foreground">Mental Reflection</h2>
+              {REFLECTIONS.map((q, i) => (
+                <div key={q.key} className="rounded-2xl border border-border bg-card p-6 shadow-sm">
+                  <label className="flex items-start gap-3 text-base font-semibold text-card-foreground">
+                    <span className="mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-primary text-sm font-bold text-primary-foreground">
+                      {i + 1}
+                    </span>
+                    <span className="pt-0.5">{q.label}</span>
+                  </label>
+                  <textarea
+                    required
+                    rows={3}
+                    value={form[q.key]}
+                    onChange={(e) => updateField(q.key, e.target.value)}
+                    placeholder={q.placeholder}
+                    className="mt-4 w-full resize-none rounded-lg border border-input bg-background px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground/70 focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary/20"
+                  />
+                </div>
+              ))}
+            </section>
 
             {error && (
               <div className="rounded-lg border border-destructive/40 bg-destructive/10 px-4 py-3 text-sm text-destructive">

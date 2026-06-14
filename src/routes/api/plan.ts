@@ -3,6 +3,13 @@ import { createFileRoute } from "@tanstack/react-router";
 import { GOLF_KNOWLEDGE_BASE } from "../../lib/golf-knowledge-base";
 
 type Body = {
+  courseName?: string;
+  totalScore?: string;
+  coursePar?: string;
+  fairwaysHit?: string;
+  fairwaysAvailable?: string;
+  greensInRegulation?: string;
+  totalPutts?: string;
   score?: string;
   pattern?: string;
   thoughts?: string;
@@ -17,7 +24,20 @@ export const Route = createFileRoute("/api/plan")({
         if (!key) return new Response("Missing LOVABLE_API_KEY", { status: 500 });
 
         const body = (await request.json()) as Body;
-        const userPrompt = `A golfer just finished a round. Here is their debrief:
+
+        const stats = [
+          `Course: ${body.courseName || "(not provided)"}`,
+          `Score: ${body.totalScore || "?"} / Par ${body.coursePar || "72"}`,
+          `Fairways: ${body.fairwaysHit || "?"} / ${body.fairwaysAvailable || "?"}`,
+          `Greens in regulation: ${body.greensInRegulation || "?"}`,
+          `Total putts: ${body.totalPutts || "?"}`,
+        ].join("\n");
+
+        const userPrompt = `A golfer just finished a round. Here are their stats:
+
+${stats}
+
+Here is their mental debrief:
 
 1. Score vs normal game: ${body.score || "(none)"}
 2. Bad shot patterns / where they happened: ${body.pattern || "(none)"}

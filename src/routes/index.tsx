@@ -19,8 +19,8 @@ export const Route = createFileRoute("/")({
 const REFLECTIONS: { key: "score" | "pattern" | "thoughts" | "response"; label: string; placeholder: string }[] = [
   {
     key: "score",
-    label: "How did you score relative to your normal game?",
-    placeholder: "e.g. Shot 88, usually around 82. Front nine was solid, back nine fell apart.",
+    label: "How did the round feel? Did you play better or worse than the score shows?",
+    placeholder: "e.g. I struck the ball well but three-putted four times. The 88 felt like a 78 that got away from me.",
   },
   {
     key: "pattern",
@@ -43,6 +43,7 @@ type FormState = {
   courseName: string;
   totalScore: string;
   coursePar: string;
+  handicap: string;
   fairwaysHit: string;
   fairwaysAvailable: string;
   greensInRegulation: string;
@@ -57,6 +58,7 @@ const INITIAL_FORM: FormState = {
   courseName: "",
   totalScore: "",
   coursePar: "72",
+  handicap: "",
   fairwaysHit: "",
   fairwaysAvailable: "",
   greensInRegulation: "",

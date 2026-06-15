@@ -12,17 +12,17 @@ This checklist maps tasks needed to move from the current single-call implementa
 
 ## Step 2: `prompts/` (write all prompt files)
 
-- [ ] Create `prompts/` directory.
-- [ ] Add `prompts/orchestrator-prompt.md` (orchestrator guidance and constraints).
-- [ ] Add `prompts/stat-interpreter-prompt.md`.
-- [ ] Add `prompts/mental-game-analyzer-prompt.md`.
-- [ ] Add `prompts/course-context-prompt.md`.
-- [ ] Add `prompts/practice-plan-generator-prompt.md` (ground with `docs/golf-knowledge-base.md`).
-- [ ] Add `prompts/reviewer-prompt.md` and `prompts/reviewer-rubric.md`.
+- [x] Create `prompts/` directory.
+- [x] Add `prompts/orchestrator-prompt.md` (orchestrator guidance and constraints).
+- [x] Add `prompts/stat-interpreter-prompt.md`.
+- [x] Add `prompts/mental-game-analyzer-prompt.md`.
+- [x] Add `prompts/course-context-prompt.md`.
+- [x] Add `prompts/practice-plan-generator-prompt.md` (ground with `docs/golf-knowledge-base.md`).
+- [x] Add `prompts/reviewer-prompt.md` and `prompts/reviewer-rubric.md`.
 
 ## Step 3: `src/lib/agents.ts` (one function per agent)
 
-- [ ] Create `agents/` directory with role-definition markdown files:
+- [ ] Create `/src/agents/` directory with role-definition markdown files:
   - `agents/orchestrator.md` (spec)
   - `agents/stat-interpreter.md`
   - `agents/mental-game-analyzer.md`

@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { lookupGolfCourse } from "../../mcp/course-lookup-handler";
+import { lookupGolfCourse } from "../../../mcp/course-lookup-handler";
 
 export const Route = createFileRoute("/api/mcp-course")({
   server: {

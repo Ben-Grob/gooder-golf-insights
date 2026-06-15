@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ApiPlanRouteImport } from './routes/api/plan'
+import { Route as ApiMcpCourseRouteImport } from './routes/api/mcp-course'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -22,30 +23,39 @@ const ApiPlanRoute = ApiPlanRouteImport.update({
   path: '/api/plan',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiMcpCourseRoute = ApiMcpCourseRouteImport.update({
+  id: '/api/mcp-course',
+  path: '/api/mcp-course',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/api/mcp-course': typeof ApiMcpCourseRoute
   '/api/plan': typeof ApiPlanRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/api/mcp-course': typeof ApiMcpCourseRoute
   '/api/plan': typeof ApiPlanRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/api/mcp-course': typeof ApiMcpCourseRoute
   '/api/plan': typeof ApiPlanRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/api/plan'
+  fullPaths: '/' | '/api/mcp-course' | '/api/plan'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/api/plan'
-  id: '__root__' | '/' | '/api/plan'
+  to: '/' | '/api/mcp-course' | '/api/plan'
+  id: '__root__' | '/' | '/api/mcp-course' | '/api/plan'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  ApiMcpCourseRoute: typeof ApiMcpCourseRoute
   ApiPlanRoute: typeof ApiPlanRoute
 }
 
@@ -65,13 +75,31 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPlanRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/mcp-course': {
+      id: '/api/mcp-course'
+      path: '/api/mcp-course'
+      fullPath: '/api/mcp-course'
+      preLoaderRoute: typeof ApiMcpCourseRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  ApiMcpCourseRoute: ApiMcpCourseRoute,
   ApiPlanRoute: ApiPlanRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}

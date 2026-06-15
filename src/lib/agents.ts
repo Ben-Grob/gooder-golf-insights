@@ -1,26 +1,57 @@
 // Agent call stubs. Each function should call `callGemini()` in `gemini.ts` with the appropriate prompt.
-// TODO: Implement each agent with real prompts from prompts/ folder
+// TODO: Implement remaining prompt files and add more robust output validation.
 
+import { readFile } from "fs/promises";
 import { callGemini } from "./gemini";
 
-export async function runStatInterpreter(input: any): Promise<{ diagnosis: string }> {
-  // TODO: load prompts/stat-interpreter-prompt.md and call callGemini
-  const response = await callGemini([
-    { role: "user", content: `Analyze these stats: ${JSON.stringify(input)}` },
-  ]);
-  return { diagnosis: response };
+const promptsRoot = new URL("../../prompts/", import.meta.url);
+
+async function loadPrompt(fileName: string) {
+  return readFile(new URL(fileName, promptsRoot), "utf-8");
 }
 
-export async function runMentalGameAnalyzer(input: any): Promise<{ mentalPattern: string }> {
-  // TODO: load prompts/mental-game-analyzer-prompt.md and call callGemini
+function parseJson<T>(response: string): T {
+  const start = response.indexOf("{");
+  const end = response.lastIndexOf("}");
+  if (start === -1 || end === -1 || end <= start) {
+    throw new Error("Unable to parse JSON from Gemini response");
+  }
+  const jsonText = response.slice(start, end + 1);
+  return JSON.parse(jsonText) as T;
+}
+
+export async function runStatInterpreter(input: any): Promise<{ diagnosis: string; keyMetric: string; recommendation: string }> {
+  const systemPrompt = await loadPrompt("stat-interpreter-prompt.md");
   const response = await callGemini([
-    { role: "user", content: `Analyze mental pattern: ${JSON.stringify(input)}` },
+    { role: "system", content: systemPrompt },
+    { role: "user", content: `Round stats:\n${JSON.stringify(input, null, 2)}` },
   ]);
-  return { mentalPattern: response };
+
+  const parsed = parseJson<{ diagnosis: string; keyMetric: string; recommendation: string }>(response);
+  return {
+    diagnosis: parsed.diagnosis,
+    keyMetric: parsed.keyMetric,
+    recommendation: parsed.recommendation,
+  };
+}
+
+export async function runMentalGameAnalyzer(input: any): Promise<{ mentalPattern: string; description: string; coachingNote: string }> {
+  const systemPrompt = await loadPrompt("mental-game-analyzer-prompt.md");
+  const response = await callGemini([
+    { role: "system", content: systemPrompt },
+    { role: "user", content: `Mental debrief:\n${JSON.stringify(input, null, 2)}` },
+  ]);
+
+  const parsed = parseJson<{ mentalPattern: string; description: string; coachingNote: string }>(response);
+  return {
+    mentalPattern: parsed.mentalPattern,
+    description: parsed.description,
+    coachingNote: parsed.coachingNote,
+  };
 }
 
 export async function runCourseContext(courseName: string): Promise<{ courseContext: string }> {
-  // TODO: call mcp/course-lookup-handler.ts and/or callGemini with course context
+  // TODO: implement course context via the MCP tool.
   const response = await callGemini([
     { role: "user", content: `Provide context for course: ${courseName}` },
   ]);

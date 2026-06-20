@@ -18,6 +18,7 @@ See [architecture.md](../architecture.md) for the target design.
 - [x] Extend `src/lib/gemini.ts` — multi-turn messages, `tools`, `callGeminiCompletion`
 - [x] Add `callGeminiTool()` to `src/agents/common.ts`
 
+
 ## Phase 3 — LLM orchestrator
 
 - [x] Load orchestrator prompt via `?raw`

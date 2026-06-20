@@ -7,7 +7,7 @@
 
 ## What it does
 Gooder golf debriefs the round of a golfer by interviewing the physical and mental troubles and sucesses to help them improve their score.
-This includes mental thoughts and a practice plan.
+This includes mental thoughts and a practice plan. Fix
 
 ## Why I built it
 Golf is addicting, but imporvement is non-linear. With professional instruction being expensive, this aims to give golfers an easy way of improving that is specific to thier game.

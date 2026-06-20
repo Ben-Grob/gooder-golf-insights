@@ -1,10 +1,9 @@
 # Gooder Golf
 
 ## TLDR for P3 (6/14)
-- This is an extension of my project for P1
-- Improvements planned to be made from P1 include addition of agentic pipeline, MCP tool, and greater UX designed for first time users.
-- Currently have progress toward agentic pipeline and greater UX, missing MCP
-- Planned MCP will allow for information look up on either a golf course or swing fixes/drills to reccomend
+- Multi-agent pipeline with LLM orchestrator (Gemini tool-calling)
+- GolfCourseAPI MCP for course rating/slope/par lookup
+- Per-agent TypeScript modules in `src/agents/`
 
 ## What it does
 Gooder golf debriefs the round of a golfer by interviewing the physical and mental troubles and sucesses to help them improve their score.
@@ -14,8 +13,10 @@ This includes mental thoughts and a practice plan.
 Golf is addicting, but imporvement is non-linear. With professional instruction being expensive, this aims to give golfers an easy way of improving that is specific to thier game.
 
 ## How it works
-  - Tool chain (Lovable → Gemini 3 Flash via Lovable AI Gateway) <-- I may want to change this to use an anthorpic api
-  - User Questions: The user is prompted to enter round stats and answer four questions about their roundto give the model context
+  - Lovable AI Gateway → Gemini 3 Flash
+  - LLM orchestrator routes debrief through specialist agents (stat, mental, course, plan, review)
+  - GolfCourseAPI MCP supplies course rating/slope/par for course context agent
+  - User enters round stats and answers four reflection questions
     
 ## Prompt Design Decisions
   - The system prompt aims to shape the voice to reflect the ideas of Bob Rotella, the author of "Golf Is Not A Game Of Perfect". The behavior of the prompt should be to reply with a practice plan and summary.
@@ -43,13 +44,20 @@ For P3, prompts look different with the introduction of sub agents. This will al
 ## Known Limitations
 - This app will have limits, the app cannot see the swing of the golfer, so it is relying on the players honesty and making assumptions about how well they can hit the ball. This is outside of the project scope regardless of timeline.
 - Technical fixes are often too risky to suggest with a written description alone
-- Responses depend on good descriptive answers from the user. Inputs are from open questions, so honesty, accuracy, and detail can tarnish the quality if left behind.  <-- This is a target of P3
-- No MCP implementation yet. 
+- Responses depend on good descriptive answers from the user.
+
+## Environment variables
+
+| Variable | Required | Purpose |
+|----------|----------|---------|
+| `LOVABLE_API_KEY` | Yes | Gemini API via Lovable gateway |
+| `GOLFCOURSE_API_KEY` | No | [GolfCourseAPI](https://golfcourseapi.com/) course lookup; uses fallback when unset |
 
 ## What's next
-- Allow for follow up questions to ensure a quality response. whether or not follow up questions are asked can be decided by orchestrator.
-- Add an MCP that searches a knowledge base for drills/suggestions and or searches for information on a given golf course.
-  
+
+- Allow follow-up questions (orchestrator decides whether to ask)
+- MCP for drills/knowledge-base search
+
 ## Tools used to build it
 - Lovable (for website building)
 - Copilot (for specific changes and iteration)

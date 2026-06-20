@@ -1,4 +1,24 @@
-import { callGemini } from "../lib/gemini";
+import {
+  callGemini,
+  callGeminiCompletion,
+  type GeminiMessage,
+  type GeminiToolDefinition,
+} from "../lib/gemini";
+
+export type GeminiToolCallResult = {
+  name: string;
+  arguments: Record<string, unknown>;
+  tool_call_id: string;
+  rawAssistantMessage: {
+    role: "assistant";
+    content: string | null;
+    tool_calls: Array<{
+      id: string;
+      type: "function";
+      function: { name: string; arguments: string };
+    }>;
+  };
+};
 
 export async function callGeminiAgent(
   systemPrompt: string,
@@ -12,6 +32,48 @@ export async function callGeminiAgent(
     ],
     options
   );
+}
+
+export async function callGeminiTool(
+  messages: GeminiMessage[],
+  tools: GeminiToolDefinition[],
+  options?: { model?: string; maxRetries?: number }
+): Promise<GeminiToolCallResult | null> {
+  const message = await callGeminiCompletion(messages, {
+    ...options,
+    tools,
+    toolChoice: "required",
+  });
+
+  const toolCall = message.tool_calls?.[0];
+  if (!toolCall) return null;
+
+  let parsedArgs: Record<string, unknown> = {};
+  try {
+    parsedArgs = JSON.parse(toolCall.function.arguments || "{}") as Record<string, unknown>;
+  } catch {
+    parsedArgs = {};
+  }
+
+  return {
+    name: toolCall.function.name,
+    arguments: parsedArgs,
+    tool_call_id: toolCall.id,
+    rawAssistantMessage: {
+      role: "assistant",
+      content: message.content ?? null,
+      tool_calls: [
+        {
+          id: toolCall.id,
+          type: "function",
+          function: {
+            name: toolCall.function.name,
+            arguments: toolCall.function.arguments,
+          },
+        },
+      ],
+    },
+  };
 }
 
 export function parseJsonLoose<T = unknown>(text: string): T {

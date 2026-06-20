@@ -52,11 +52,13 @@ Dr. Bob Rotella's mental game philosophy from *Golf is Not a Game of Perfect*.
 ## Architecture Overview
 
 The core of the app is a multi-agent pipeline. See `architecture.md` for the full diagram.
-The pipeline lives in `src/lib/pipeline.ts`. The API route `src/routes/api/plan.ts` calls
-the pipeline and returns the result. Do not add business logic to route handlers.
+The LLM orchestrator lives in `src/agents/orchestrator.ts` and is re-exported from
+`src/lib/pipeline.ts`. The API route `src/routes/api/plan.ts` calls the pipeline and
+returns the result. Do not add business logic to route handlers.
 
-Agent prompts live in `prompts/`. Agent role definitions live in `agents/`.
+Agent prompts live in `prompts/`. Agent role definitions live in `src/agents/*.md`.
 Never hardcode a prompt string inside a `.ts` file — prompts belong in `prompts/`.
+Grounding docs may be imported via `?raw` from `docs/`.
 
 The MCP course lookup tool lives in `mcp/`. It is called by the course-context agent
 during the pipeline run. The MCP server is defined in `mcp/course-lookup-server.ts`.
@@ -67,14 +69,14 @@ during the pipeline run. The MCP server is defined in `mcp/course-lookup-server.
 
 There are six agents. The orchestrator manages the flow. The five sub-agents each do one job.
 
-1. **Orchestrator** — delegates to sub-agents, manages the review loop, surfaces final output
+1. **Orchestrator** — LLM tool-calling loop; invokes sub-agents as tools; nudges one revision on reviewer rejection
 2. **Stat Interpreter** — reads raw round stats, returns structured diagnosis
 3. **Mental Game Analyzer** — reads mental reflection questions, returns psychological pattern
 4. **Course Context** — calls MCP tool with course name, returns rating/slope/context
 5. **Practice Plan Generator** — receives outputs from agents 2-4, writes the practice plan
 6. **Reviewer** — evaluates the plan against `prompts/reviewer-rubric.md`, returns approved or feedback with reasons
 
-The review loop: Orchestrator → Agents 2+3+4 (parallel) → Agent 5 → Agent 6 → if rejected, back to Agent 5 with feedback. Max 2 iterations.
+The review loop: Orchestrator LLM → stat → mental → course → plan → review → if rejected, regenerate plan with feedback (max 1 revision) → finish.
 
 ---
 
@@ -96,8 +98,8 @@ explicitly planned. Keep it fast and focused.
 - Do not refactor working Lovable-generated UI components unless directly asked.
 - Do not add logging that exposes the Gemini API key or user input to the client.
 - Do not create new routes without a corresponding entry in the router.
-- Do not let the orchestrator write code or make Gemini API calls directly — it delegates only.
-- Do not exceed 2 review loop iterations in the pipeline.
+- The orchestrator makes Gemini tool-calling requests only — it must not write plan content directly.
+- Do not exceed 1 review revision in the pipeline (orchestrator nudge after first rejection).
 
 ---
 
@@ -105,10 +107,12 @@ explicitly planned. Keep it fast and focused.
 
 | What | Where |
 |---|---|
-| Pipeline orchestrator | `src/lib/pipeline.ts` |
-| Individual agent functions | `src/lib/agents.ts` |
+| Pipeline entry | `src/lib/pipeline.ts` (re-exports orchestrator) |
+| LLM orchestrator | `src/agents/orchestrator.ts` |
+| Individual agent functions | `src/agents/*.ts` |
+| Agent shared helpers | `src/agents/common.ts` |
 | Gemini API utility | `src/lib/gemini.ts` |
-| Agent role definitions | `agents/*.md` |
+| Agent role definitions | `src/agents/*.md` |
 | Agent prompts | `prompts/*.md` |
 | Reviewer rubric | `prompts/reviewer-rubric.md` |
 | MCP tool | `mcp/` |
@@ -124,5 +128,5 @@ explicitly planned. Keep it fast and focused.
 ## Shared Context Note
 
 This file is read by GitHub Copilot models. If you are a Claude model being called
-from within Copilot, also read `architecture.md` and the relevant agent file in `agents/`
+from within Copilot, also read `architecture.md` and the relevant agent file in `src/agents/`
 before proceeding. Do not read `claude.md` — it does not exist in this repo.

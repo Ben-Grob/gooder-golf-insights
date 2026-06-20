@@ -1,6 +1,6 @@
-# Feedback Log
+# Pipeline Feedback Log
 
-Append-only log of prompts and AI responses. Use this file for persistent memory and auditing.
-
+Append-only log of orchestrator tool calls and pipeline events.
+Do not store API keys or full user debrief payloads here.
 
 ---

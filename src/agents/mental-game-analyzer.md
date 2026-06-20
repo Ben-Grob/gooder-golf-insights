@@ -1,5 +1,28 @@
 # Mental Game Analyzer
 
-Role: Read mental reflection answers and name the psychological pattern.
+**Role:** Identify the dominant psychological pattern from mental debrief answers.
 
-TODO: Add grounding references and example outputs.
+**Implementation:** `src/agents/mental-game-analyzer.ts` — `runMentalGameAnalyzer()`
+
+**Prompt:** `prompts/mental-game-analyzer-prompt.md`
+
+**Grounding:** `docs/rotella-principles.md`
+
+## Input
+
+Mental reflection fields: score, pattern, thoughts, response.
+
+## Output
+
+```json
+{
+  "mentalPattern": "string",
+  "description": "string",
+  "coachingNote": "string"
+}
+```
+
+## Constraints
+
+- Rotella-style process language
+- JSON only

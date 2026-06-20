@@ -1,5 +1,34 @@
 # Practice Plan Generator
 
-Role: Combine stat diagnosis, mental pattern, and course context to produce a 3-part practice plan.
+**Role:** Synthesize diagnostic outputs into a personalized markdown practice plan.
 
-TODO: Add prompt examples and expected markdown output format.
+**Implementation:** `src/agents/practice-plan-generator.ts` — `runPracticePlanGenerator()`
+
+**Prompt:** `prompts/practice-plan-generator-prompt.md`
+
+**Grounding:** `docs/golf-knowledge-base.md`
+
+## Input
+
+```json
+{
+  "input": { "..." },
+  "stat": { "..." },
+  "mental": { "..." },
+  "course": { "..." },
+  "reviewFeedback": "optional string from reviewer"
+}
+```
+
+## Output
+
+Markdown with three sections:
+
+1. Mental Pattern Identified
+2. Physical Focus (one thing only)
+3. This Week's Practice Plan (exactly 3 drills)
+
+## Constraints
+
+- Honor `reviewFeedback` when present
+- Rotella tone; one swing fix maximum

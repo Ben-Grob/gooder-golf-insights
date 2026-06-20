@@ -1,6 +1,15 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import ReactMarkdown from "react-markdown";
+
+const PIPELINE_STAGES = [
+  "Orchestrator coordinating agents…",
+  "Stat interpreter analyzing your round…",
+  "Mental game analyzer reading your reflections…",
+  "Course context lookup…",
+  "Practice plan generator drafting your plan…",
+  "Reviewer checking quality…",
+];
 
 export const Route = createFileRoute("/")({
   component: Index,
@@ -73,9 +82,21 @@ function Index() {
   const [form, setForm] = useState<FormState>(INITIAL_FORM);
   const [plan, setPlan] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const [pipelineStage, setPipelineStage] = useState(0);
   const [error, setError] = useState<string | null>(null);
   const [evaluation, setEvaluation] = useState({ usefulness: 0, willUse: null as boolean | null });
   const [evaluationSubmitted, setEvaluationSubmitted] = useState(false);
+
+  useEffect(() => {
+    if (!loading) {
+      setPipelineStage(0);
+      return;
+    }
+    const id = setInterval(() => {
+      setPipelineStage((s) => (s + 1) % PIPELINE_STAGES.length);
+    }, 2500);
+    return () => clearInterval(id);
+  }, [loading]);
 
   const updateField = (key: keyof FormState, value: string) => {
     setForm((prev) => ({ ...prev, [key]: value }));
@@ -309,7 +330,7 @@ function Index() {
               disabled={loading}
               className="group relative w-full overflow-hidden rounded-xl bg-primary px-6 py-4 text-base font-semibold text-primary-foreground shadow-lg shadow-primary/20 transition hover:shadow-xl hover:shadow-primary/30 disabled:opacity-75"
             >
-              {loading ? "Building your plan…" : "Get My Practice Plan →"}
+              {loading ? PIPELINE_STAGES[pipelineStage] : "Get My Practice Plan →"}
             </button>
           </form>
         )}

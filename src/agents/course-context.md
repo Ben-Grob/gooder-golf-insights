@@ -1,5 +1,26 @@
 # Course Context
 
-Role: Call MCP tool to return course rating/slope/par and a brief difficulty note.
+**Role:** Turn MCP course lookup data into strategic context for the plan generator.
 
-TODO: Define fallback behavior when lookup fails.
+**Implementation:** `src/agents/course-context.ts` — `runCourseContext()`
+
+**Prompt:** `prompts/course-context-prompt.md`
+
+**MCP:** `mcp/course-lookup-handler.ts` → GolfCourseAPI
+
+## Input
+
+Course name string.
+
+## Output
+
+```json
+{
+  "courseProfile": "string",
+  "strategicFocus": "string"
+}
+```
+
+## Fallback
+
+When lookup returns `source: "fallback"`, produce adaptable universal course management guidance.

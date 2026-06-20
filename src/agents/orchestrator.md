@@ -1,7 +1,38 @@
 # Orchestrator
 
-Role: Coordinator and quality gatekeeper.
+**Role:** LLM coordinator and quality gatekeeper.
 
-TODO: Define the orchestrator's mandate, inputs, outputs, and constraints.
+**Implementation:** `src/agents/orchestrator.ts` — `runGooderGolfPipeline()`
 
-See `architecture.md` for the orchestration flow and review loop.
+**Prompt:** `prompts/orchestrator-prompt.md`
+
+## Mandate
+
+- Receive debrief form input from the API route
+- Run a Gemini tool-calling loop (max 10 iterations)
+- Dispatch to worker agents via tools; never write plan content directly
+- Nudge one revision when reviewer rejects a draft
+- Return final markdown practice plan when `finish` is called or loop ends
+
+## Tools exposed to the LLM
+
+- `run_stat_interpreter`
+- `run_mental_game_analyzer`
+- `run_course_context`
+- `run_practice_plan_generator`
+- `run_reviewer`
+- `finish`
+
+## Inputs
+
+Full debrief object: stats, mental reflections, `courseName`.
+
+## Outputs
+
+Markdown practice plan string (same contract as `POST /api/plan`).
+
+## Constraints
+
+- One tool call per orchestrator turn
+- Max 1 plan revision after reviewer rejection
+- Does not call GolfCourseAPI directly — delegates to course context agent

@@ -1,3 +1,4 @@
+import rotellaPrinciples from "../../docs/rotella-principles.md?raw";
 import mentalGameAnalyzerSystem from "../../prompts/mental-game-analyzer-prompt.md?raw";
 import { callGeminiAgent, parseJsonLoose } from "./common";
 
@@ -11,7 +12,9 @@ export async function runMentalGameAnalyzer(
   input: Record<string, unknown>,
   systemPromptOverride?: string
 ): Promise<MentalGameAnalyzerOutput> {
-  const system = systemPromptOverride ?? mentalGameAnalyzerSystem;
+  const system =
+    systemPromptOverride ??
+    `${mentalGameAnalyzerSystem}\n\n## Grounding — Rotella Principles\n\n${rotellaPrinciples}`;
   const user = `Mental debrief:\n${JSON.stringify(input, null, 2)}`;
   const text = await callGeminiAgent(system, user);
   return parseJsonLoose<MentalGameAnalyzerOutput>(text);

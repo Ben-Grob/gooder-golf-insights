@@ -1,29 +1,23 @@
 import "@tanstack/react-start";
 import { createFileRoute } from "@tanstack/react-router";
+import { debriefSchema } from "../../lib/debrief-schema";
 import { runGooderGolfPipeline } from "../../lib/pipeline";
-
-type Body = {
-  courseName?: string;
-  totalScore?: string;
-  coursePar?: string;
-  handicap?: string;
-  fairwaysHit?: string;
-  fairwaysAvailable?: string;
-  greensInRegulation?: string;
-  totalPutts?: string;
-  score?: string;
-  pattern?: string;
-  thoughts?: string;
-  response?: string;
-};
 
 export const Route = createFileRoute("/api/plan")({
   server: {
     handlers: {
       POST: async ({ request }: { request: Request }) => {
         try {
-          const body = (await request.json()) as Body;
-          const plan = await runGooderGolfPipeline(body);
+          const raw = await request.json();
+          const parsed = debriefSchema.safeParse(raw);
+          if (!parsed.success) {
+            return new Response(
+              JSON.stringify({ error: parsed.error.flatten().fieldErrors }),
+              { status: 400, headers: { "Content-Type": "application/json" } }
+            );
+          }
+
+          const plan = await runGooderGolfPipeline(parsed.data);
           return new Response(JSON.stringify({ plan }), {
             headers: { "Content-Type": "application/json" },
           });

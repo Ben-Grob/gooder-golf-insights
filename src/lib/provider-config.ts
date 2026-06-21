@@ -16,11 +16,11 @@ function parseNumber(value: string | undefined, defaultValue: number): number {
 }
 
 export function getOrchestratorModel(): string {
-  return process.env.ANTHROPIC_MODEL_ORCHESTRATOR ?? DEFAULT_ORCHESTRATOR_MODEL;
+  return DEFAULT_ORCHESTRATOR_MODEL;
 }
 
 export function getSpecialistModel(): string {
-  return process.env.ANTHROPIC_MODEL_SPECIALIST ?? DEFAULT_SPECIALIST_MODEL;
+  return DEFAULT_SPECIALIST_MODEL;
 }
 
 export function getAnthropicApiKey(): string {

@@ -78,6 +78,40 @@ const INITIAL_FORM: FormState = {
   response: "",
 };
 
+const DEV_TEST_PRESETS: Record<"solidRound" | "toughRound", FormState> = {
+  solidRound: {
+    courseName: "Pebble Beach Golf Links",
+    totalScore: "81",
+    coursePar: "72",
+    handicap: "10.8",
+    fairwaysHit: "9",
+    fairwaysAvailable: "14",
+    greensInRegulation: "10",
+    totalPutts: "32",
+    score: "Ball-striking felt steady and the round was close to my normal good day.",
+    pattern: "Misses were mostly short right with wedges from 90-120 yards.",
+    thoughts: "I was trying to force proximity instead of committing to one target.",
+    response: "I reset pretty well after misses but occasionally rushed the next shot.",
+  },
+  toughRound: {
+    courseName: "Augusta National Golf Club",
+    totalScore: "92",
+    coursePar: "72",
+    handicap: "12.4",
+    fairwaysHit: "5",
+    fairwaysAvailable: "14",
+    greensInRegulation: "6",
+    totalPutts: "38",
+    score: "The score was worse than usual and I never felt settled after the first few holes.",
+    pattern: "Push-slice with driver on tight holes and frequent three-putts after long first putts.",
+    thoughts: "Mostly outcome thoughts like don't blow up and don't miss this one.",
+    response: "After bad shots I got frustrated, sped up, and carried mistakes for several holes.",
+  },
+};
+
+const ENABLE_TEST_PREFILL =
+  import.meta.env.DEV && import.meta.env.VITE_ENABLE_TEST_PREFILL === "true";
+
 function Index() {
   const [form, setForm] = useState<FormState>(INITIAL_FORM);
   const [plan, setPlan] = useState<string | null>(null);
@@ -101,6 +135,15 @@ function Index() {
 
   const updateField = (key: keyof FormState, value: string) => {
     setForm((prev) => ({ ...prev, [key]: value }));
+  };
+
+  const applyTestPreset = (preset: keyof typeof DEV_TEST_PRESETS) => {
+    setForm(DEV_TEST_PRESETS[preset]);
+    setError(null);
+    setPlan(null);
+    setCourseNotice(null);
+    setEvaluation({ usefulness: 0, willUse: null });
+    setEvaluationSubmitted(false);
   };
 
   const submit = async (e: React.FormEvent) => {
@@ -336,6 +379,25 @@ function Index() {
             >
               {loading ? PIPELINE_STAGES[pipelineStage] : "Get My Practice Plan →"}
             </button>
+
+            {ENABLE_TEST_PREFILL && (
+              <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                <button
+                  type="button"
+                  onClick={() => applyTestPreset("solidRound")}
+                  className="rounded-xl border border-border bg-card px-4 py-3 text-sm font-semibold text-foreground transition hover:bg-secondary"
+                >
+                  Prefill: Solid Round
+                </button>
+                <button
+                  type="button"
+                  onClick={() => applyTestPreset("toughRound")}
+                  className="rounded-xl border border-border bg-card px-4 py-3 text-sm font-semibold text-foreground transition hover:bg-secondary"
+                >
+                  Prefill: Tough Round
+                </button>
+              </div>
+            )}
           </form>
         )}
 

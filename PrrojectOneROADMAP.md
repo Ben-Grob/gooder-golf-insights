@@ -1,5 +1,5 @@
 # Gooder Golf — Project Roadmap
-> **Build path:** Lovable (no-code, full-stack) + Google Gemini API (free tier)
+> **Build path:** Lovable (no-code, full-stack) + Anthropic API (free tier)
 
 ## Project Overview
 
@@ -48,7 +48,7 @@ User (browser)
     ↓
 Lovable-generated frontend (React + Tailwind — no code written manually)
     ↓
-Google Gemini API (gemini-1.5-flash, free tier via aistudio.google.com)
+Anthropic API (claude-sonnet-4-6, configured via the Anthropic console)
     ↓
 System prompt: Caddie/coach persona + Rotella knowledge base (grounding)
     ↓
@@ -76,11 +76,11 @@ Open Lovable, click **New Project**, and paste this as your first prompt:
 
 Do not ask for extra features yet. One screen, one form, one output.
 
-### Step 3 — Add Gemini integration
+### Step 3 — Add Anthropic integration
 
 Once Lovable scaffolds the UI, type in the Lovable chat panel:
 
-> "Add an AI feature powered by Google Gemini. When the user submits the form, send their answers to the Gemini API and display the response as the practice plan. Use the gemini-1.5-flash model."
+> "Add an AI feature powered by Anthropic. When the user submits the form, send their answers to the Anthropic API and display the response as the practice plan. Use the claude-sonnet-4-6 model."
 
 Lovable will ask you to paste your API key — it stores it as a backend secret, not in code.
 
@@ -89,7 +89,7 @@ Lovable will ask you to paste your API key — it stores it as a backend secret,
 When Lovable generates a system prompt, replace it entirely with the one in the section below. Do not let Lovable write a generic one — this is the most important step in the project.
 
 In the Lovable chat, type:
-> "Replace the system prompt for the Gemini call with the following: [paste system prompt from below]"
+> "Replace the system prompt for the Anthropic call with the following: [paste system prompt from below]"
 
 ### Step 5 — Connect GitHub
 
@@ -183,7 +183,7 @@ Run all 3 test cases and score each output 1–5 on each criterion. Document res
 Lovable auto-commits every change. At key milestones, manually label commits in the Lovable interface to tell a coherent story:
 
 1. `init: scaffold Gooder Golf in Lovable`
-2. `feat: add Gemini API integration`
+2. `feat: add Anthropic API integration`
 3. `feat: add system prompt v1 with Rotella grounding`
 4. `fix: refine system prompt after test case 1 output was too generic`
 5. `feat: improve debrief questions based on test feedback`
@@ -201,8 +201,8 @@ The README is the build log. It must include (per rubric):
 ## What it does
 ## Why I built it
 ## How it works
-  - Tool chain (Lovable → Gemini API)
-  - Why Gemini 1.5 Flash
+  - Tool chain (Lovable → Anthropic API)
+  - Why Claude Sonnet 4.6
 ## Prompt Design Decisions
   - System prompt v1 (paste verbatim in a code block)
   - What it got wrong on first test
@@ -222,7 +222,7 @@ The README is the build log. It must include (per rubric):
 
 ## API Key Safety
 
-> **Never commit your Gemini API key to GitHub.** Lovable stores it as a backend secret automatically — this is handled for you as long as you paste it into Lovable's secret manager and not directly into code. If you ever work on this project outside Lovable, store the key in a `.env` file and add `.env` to `.gitignore` before your first push. GitHub is scanned constantly by bots; an exposed key can be abused within minutes.
+> **Never commit your Anthropic API key to GitHub.** Lovable stores it as a backend secret automatically — this is handled for you as long as you paste it into Lovable's secret manager and not directly into code. If you ever work on this project outside Lovable, store the key in a `.env` file and add `.env` to `.gitignore` before your first push. GitHub is scanned constantly by bots; an exposed key can be abused within minutes.
 
 ---
 

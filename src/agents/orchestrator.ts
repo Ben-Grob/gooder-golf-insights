@@ -1,7 +1,7 @@
 import orchestratorSystem from "../../prompts/orchestrator-prompt.md?raw";
 import type { CourseContextOutput } from "./course-context";
 import { runCourseContext } from "./course-context";
-import { callGeminiTool, type GeminiToolCallResult } from "./common";
+import { callAnthropicTool, type AnthropicToolCallResult } from "./common";
 import type { MentalGameAnalyzerOutput } from "./mental-game-analyzer";
 import { runMentalGameAnalyzer } from "./mental-game-analyzer";
 import { runPracticePlanGenerator } from "./practice-plan-generator";
@@ -9,11 +9,11 @@ import type { ReviewResult } from "./reviewer";
 import { runReviewer } from "./reviewer";
 import type { StatInterpreterOutput } from "./stat-interpreter";
 import { runStatInterpreter } from "./stat-interpreter";
-import type { GeminiMessage, GeminiToolDefinition } from "../lib/gemini";
+import type { AnthropicMessage, AnthropicToolDefinition } from "../lib/anthropic-types";
 import { logPipelineEvent } from "../lib/pipeline-log";
 import { getOrchestratorModel } from "../lib/provider-config";
 
-const tools: GeminiToolDefinition[] = [
+const tools: AnthropicToolDefinition[] = [
   {
     type: "function",
     function: {
@@ -136,7 +136,7 @@ export async function runGooderGolfPipeline(
 ): Promise<PipelineResult> {
   const courseName = (input.courseName as string) || "Unknown";
 
-  const messages: GeminiMessage[] = [
+  const messages: AnthropicMessage[] = [
     { role: "system", content: orchestratorSystem },
     {
       role: "user",
@@ -156,7 +156,7 @@ export async function runGooderGolfPipeline(
   await logPipelineEvent("orchestrator_start", { courseName });
 
   for (let loop = 0; loop < 10; loop++) {
-    const toolCall = await callGeminiTool(messages, tools, {
+    const toolCall = await callAnthropicTool(messages, tools, {
       model: getOrchestratorModel(),
     });
     if (!toolCall?.name) break;
@@ -244,7 +244,7 @@ export async function runGooderGolfPipeline(
 }
 
 async function dispatchTool(
-  toolCall: GeminiToolCallResult,
+  toolCall: AnthropicToolCallResult,
   ctx: {
     input: Record<string, unknown>;
     courseName: string;

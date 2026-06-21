@@ -220,3 +220,161 @@ Do not store API keys or full user debrief payloads here.
   "approved": false
 }
 ```
+
+## 2026-06-21T17:07:10.479Z — orchestrator_start
+```json
+{
+  "courseName": "the meadows at gvsu"
+}
+```
+
+## 2026-06-21T17:07:15.029Z — orchestrator_tool_call
+```json
+{
+  "tool": "run_stat_interpreter",
+  "loop": 0
+}
+```
+
+## 2026-06-21T17:07:19.544Z — orchestrator_tool_call
+```json
+{
+  "tool": "run_mental_game_analyzer",
+  "loop": 1
+}
+```
+
+## 2026-06-21T17:07:22.719Z — orchestrator_tool_call
+```json
+{
+  "tool": "run_course_context",
+  "loop": 2
+}
+```
+
+## 2026-06-21T17:07:28.760Z — orchestrator_tool_call
+```json
+{
+  "tool": "run_practice_plan_generator",
+  "loop": 3
+}
+```
+
+## 2026-06-21T17:07:53.748Z — orchestrator_tool_call
+```json
+{
+  "tool": "run_reviewer",
+  "loop": 4
+}
+```
+
+## 2026-06-21T17:08:14.336Z — orchestrator_tool_call
+```json
+{
+  "tool": "run_practice_plan_generator",
+  "loop": 5
+}
+```
+
+## 2026-06-21T17:08:38.263Z — orchestrator_tool_call
+```json
+{
+  "tool": "run_reviewer",
+  "loop": 6
+}
+```
+
+## 2026-06-21T17:08:46.587Z — orchestrator_tool_call
+```json
+{
+  "tool": "finish",
+  "loop": 7
+}
+```
+
+## 2026-06-21T17:08:46.590Z — orchestrator_finish
+```json
+{
+  "hasDraft": true,
+  "approved": false
+}
+```
+
+## 2026-06-21T17:13:37.553Z — orchestrator_start
+```json
+{
+  "courseName": "pebble beach"
+}
+```
+
+## 2026-06-21T17:13:42.639Z — orchestrator_tool_call
+```json
+{
+  "tool": "run_stat_interpreter",
+  "loop": 0
+}
+```
+
+## 2026-06-21T17:13:47.951Z — orchestrator_tool_call
+```json
+{
+  "tool": "run_mental_game_analyzer",
+  "loop": 1
+}
+```
+
+## 2026-06-21T17:13:50.917Z — orchestrator_tool_call
+```json
+{
+  "tool": "run_course_context",
+  "loop": 2
+}
+```
+
+## 2026-06-21T17:14:00.367Z — orchestrator_tool_call
+```json
+{
+  "tool": "run_practice_plan_generator",
+  "loop": 3
+}
+```
+
+## 2026-06-21T17:14:30.966Z — orchestrator_tool_call
+```json
+{
+  "tool": "run_reviewer",
+  "loop": 4
+}
+```
+
+## 2026-06-21T17:14:49.663Z — orchestrator_tool_call
+```json
+{
+  "tool": "run_practice_plan_generator",
+  "loop": 5
+}
+```
+
+## 2026-06-21T17:15:15.710Z — orchestrator_tool_call
+```json
+{
+  "tool": "run_reviewer",
+  "loop": 6
+}
+```
+
+## 2026-06-21T17:15:24.272Z — orchestrator_tool_call
+```json
+{
+  "tool": "finish",
+  "loop": 7
+}
+```
+
+## 2026-06-21T17:15:24.274Z — orchestrator_finish
+```json
+{
+  "hasDraft": true,
+  "approved": false
+}
+```

@@ -9,7 +9,7 @@ Every suggestion, refactor, and new file must respect what is written here.
 
 Gooder Golf is a post-round golf debrief assistant. A golfer submits structured stats and
 mental reflections from their round. The app runs those inputs through a multi-agent AI
-pipeline powered by the Gemini API and returns a personalized practice plan grounded in
+pipeline powered by the Anthropic API and returns a personalized practice plan grounded in
 Dr. Bob Rotella's mental game philosophy from *Golf is Not a Game of Perfect*.
 
 ---
@@ -29,7 +29,7 @@ Dr. Bob Rotella's mental game philosophy from *Golf is Not a Game of Perfect*.
 | Styling | Tailwind CSS v4 |
 | Forms | react-hook-form + zod |
 | UI Primitives | Radix UI |
-| AI Provider | Google Gemini API (direct, gemini-2.5-flash default) |
+| AI Provider | Anthropic API (direct, claude-sonnet-4-6 default) |
 | Database | Supabase (present but not yet primary storage) |
 | Markdown rendering | react-markdown |
 
@@ -96,9 +96,9 @@ explicitly planned. Keep it fast and focused.
 - Do not write prompts inside TypeScript files. Put them in `prompts/`.
 - Do not add dependencies without checking if something in the existing stack already handles it.
 - Do not refactor working Lovable-generated UI components unless directly asked.
-- Do not add logging that exposes the Gemini API key or user input to the client.
+- Do not add logging that exposes the Anthropic API key or user input to the client.
 - Do not create new routes without a corresponding entry in the router.
-- The orchestrator makes Gemini tool-calling requests only — it must not write plan content directly.
+- The orchestrator makes Anthropic tool-calling requests only — it must not write plan content directly.
 - Do not exceed 1 review revision in the pipeline (orchestrator nudge after first rejection).
 
 ---
@@ -111,7 +111,7 @@ explicitly planned. Keep it fast and focused.
 | LLM orchestrator | `src/agents/orchestrator.ts` |
 | Individual agent functions | `src/agents/*.ts` |
 | Agent shared helpers | `src/agents/common.ts` |
-| Gemini API utility | `src/lib/gemini.ts` |
+| Anthropic API utility | `src/lib/anthropic.ts` |
 | Agent role definitions | `src/agents/*.md` |
 | Agent prompts | `prompts/*.md` |
 | Reviewer rubric | `prompts/reviewer-rubric.md` |

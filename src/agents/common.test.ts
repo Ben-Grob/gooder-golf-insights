@@ -15,7 +15,7 @@ vi.mock("../lib/provider-config", () => ({
   getSpecialistModel: () => "claude-haiku-test",
 }));
 
-import { callGeminiAgent, callGeminiTool, parseJsonLoose } from "./common";
+import { callAnthropicAgent, callAnthropicTool, parseJsonLoose } from "./common";
 
 describe("parseJsonLoose", () => {
   it("parses raw JSON", () => {
@@ -41,7 +41,7 @@ describe("provider routing in common adapter", () => {
   it("uses specialist model for agent text calls", async () => {
     callAnthropicMock.mockResolvedValueOnce('{"ok":true}');
 
-    await callGeminiAgent("system", "user");
+    await callAnthropicAgent("system", "user");
 
     expect(callAnthropicMock).toHaveBeenCalledWith(
       [
@@ -68,7 +68,7 @@ describe("provider routing in common adapter", () => {
       ],
     });
 
-    await callGeminiTool(
+    await callAnthropicTool(
       [{ role: "user", content: "run" }],
       [
         {

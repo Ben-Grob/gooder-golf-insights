@@ -13,7 +13,7 @@ Run: `npm test`
 
 ## Manual E2E (requires API keys)
 
-Set `GEMINI_API_KEY` and optionally `RAPIDAPI_KEY`, then:
+Set `ANTHROPIC_API_KEY` and optionally `RAPIDAPI_KEY`, then:
 
 1. `npm run dev`
 2. Submit debrief from `test-scenarios/round-scenarios.md` (pick 3 scenarios)

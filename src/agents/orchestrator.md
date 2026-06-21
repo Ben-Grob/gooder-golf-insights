@@ -9,7 +9,7 @@
 ## Mandate
 
 - Receive debrief form input from the API route
-- Run a Gemini tool-calling loop (max 10 iterations)
+- Run an Anthropic tool-calling loop (max 10 iterations)
 - Dispatch to worker agents via tools; never write plan content directly
 - Nudge one revision when reviewer rejects a draft
 - Return final markdown practice plan when `finish` is called or loop ends

@@ -1,6 +1,6 @@
 import reviewerSystem from "../../prompts/reviewer-prompt.md?raw";
 import reviewerRubric from "../../prompts/reviewer-rubric.md?raw";
-import { callGeminiAgent, parseJsonLoose } from "./common";
+import { callAnthropicAgent, parseJsonLoose } from "./common";
 import { getSpecialistModel } from "../lib/provider-config";
 
 export type ReviewResult = {
@@ -14,6 +14,6 @@ export async function runReviewer(
 ): Promise<ReviewResult> {
   const system = systemPromptOverride ?? `${reviewerSystem}\n\n${reviewerRubric}`;
   const user = `Review this practice plan:\n${plan}`;
-  const text = await callGeminiAgent(system, user, { model: getSpecialistModel() });
+  const text = await callAnthropicAgent(system, user, { model: getSpecialistModel() });
   return parseJsonLoose<ReviewResult>(text);
 }

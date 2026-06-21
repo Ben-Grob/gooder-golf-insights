@@ -82,7 +82,8 @@ shared context files, skills as recipes, and a feedback log for persistent memor
 
 - pipeline.ts                      ← NEW: orchestrator function + agent runner loop
 - agents.ts                        ← NEW: individual agent call functions
-- gemini.ts                        ← NEW: Gemini API utility (extracted from plan.ts)
+- anthropic.ts                     ← NEW: Anthropic API utility
+- anthropic-types.ts               ← NEW: shared message/tool types used by the Anthropic adapter
 - golf-knowledge-base.ts           ← existing
 - error-capture.ts                 ← existing
 - error-page.ts                    ← existing
@@ -90,7 +91,7 @@ shared context files, skills as recipes, and a feedback log for persistent memor
 
 ### src/routes/api/                ← existing, refactored
 
-- plan.ts                          ← refactored to call pipeline.ts instead of raw Gemini call
+- plan.ts                          ← refactored to call pipeline.ts instead of a direct provider call
 - mcp-course.ts                    ← NEW: API route that exposes the MCP course lookup tool
 
 ---
@@ -139,7 +140,7 @@ shared context files, skills as recipes, and a feedback log for persistent memor
 | Added `claude.md` and `copilot-instructions.md` | Shared context every model reads regardless of which tool calls it. Prevents agents from doing unaligned things. |
 | Added `architecture.md` | Every agent and every new Copilot session can orient itself without reading the whole codebase. |
 | Added `memory/feedback-log.md` | AI workspace memory is transient. Logging prompts and feedback to disk gives the system persistent memory across sessions. |
-| Refactored `src/lib/` | Extracts the pipeline logic and Gemini API call into their own files. `plan.ts` currently does too much. |
+| Refactored `src/lib/` | Extracts the pipeline logic and Anthropic API call into their own files. `plan.ts` currently does too much. |
 | Expanded `docs/` | Separates Rotella grounding into a domain primer the agents can load on demand. |
 
 ---

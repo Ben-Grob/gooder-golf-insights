@@ -13,10 +13,10 @@ See [architecture.md](../architecture.md) for the target design.
 - [x] Fill role specs in `src/agents/*.md`
 - [x] Replace this checklist
 
-## Phase 2 — Gemini tool-calling infrastructure
+## Phase 2 — Anthropic tool-calling infrastructure
 
-- [x] Extend `src/lib/gemini.ts` — multi-turn messages, `tools`, `callGeminiCompletion`
-- [x] Add `callGeminiTool()` to `src/agents/common.ts`
+- [x] Extend `src/lib/anthropic-types.ts` — multi-turn messages, `tools`, `callAnthropicCompletion`
+- [x] Add `callAnthropicTool()` to `src/agents/common.ts`
 
 
 ## Phase 3 — LLM orchestrator
@@ -54,7 +54,7 @@ See [architecture.md](../architecture.md) for the target design.
 ## Phase 7 — Test and validate
 
 - [x] Unit tests — `lookupGolfCourse`, `parseJsonLoose`, orchestrator dispatch
-- [ ] Manual E2E — run `test-scenarios/round-scenarios.md` (requires `GEMINI_API_KEY`)
+- [ ] Manual E2E — run `test-scenarios/round-scenarios.md` (requires `ANTHROPIC_API_KEY`)
 - [ ] MCP smoke test — `POST /api/mcp-course` with real `RAPIDAPI_KEY`
 - [x] Evaluation template — `evaluations/eval3-agentic-pipeline.md`
 
@@ -64,7 +64,7 @@ See [architecture.md](../architecture.md) for the target design.
 
 | Variable | Required | Purpose |
 |----------|----------|---------|
-| `GEMINI_API_KEY` | Yes | Gemini via direct Google API |
+| `ANTHROPIC_API_KEY` | Yes | Direct Anthropic API |
 | `RAPIDAPI_KEY` | No | RapidAPI course lookup; omit for fallback data |
 
 ---

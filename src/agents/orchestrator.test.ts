@@ -4,7 +4,7 @@ vi.mock("./common", async () => {
   const actual = await vi.importActual<typeof import("./common")>("./common");
   return {
     ...actual,
-    callGeminiTool: vi.fn(),
+    callAnthropicTool: vi.fn(),
   };
 });
 
@@ -46,13 +46,13 @@ vi.mock("../lib/pipeline-log", () => ({
   logPipelineEvent: vi.fn().mockResolvedValue(undefined),
 }));
 
-import { callGeminiTool } from "./common";
+import { callAnthropicTool } from "./common";
 import { runCourseContext } from "./course-context";
 import { runGooderGolfPipeline } from "./orchestrator";
 
 describe("runGooderGolfPipeline", () => {
   beforeEach(() => {
-    vi.mocked(callGeminiTool)
+    vi.mocked(callAnthropicTool)
       .mockResolvedValueOnce({
         name: "run_stat_interpreter",
         arguments: { input: {} },
@@ -155,7 +155,7 @@ describe("runGooderGolfPipeline", () => {
     const result = await runGooderGolfPipeline({ courseName: "Test Course" });
     expect(result.plan).toContain("Practice Plan");
     expect(result.notice).toBeUndefined();
-    expect(callGeminiTool).toHaveBeenCalled();
+    expect(callAnthropicTool).toHaveBeenCalled();
   });
 
   it("returns a separate notice when the course lookup falls back", async () => {

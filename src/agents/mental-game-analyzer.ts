@@ -1,6 +1,6 @@
 import rotellaPrinciples from "../../docs/rotella-principles.md?raw";
 import mentalGameAnalyzerSystem from "../../prompts/mental-game-analyzer-prompt.md?raw";
-import { callGeminiAgent, parseJsonLoose } from "./common";
+import { callAnthropicAgent, parseJsonLoose } from "./common";
 import { getSpecialistModel } from "../lib/provider-config";
 
 export type MentalGameAnalyzerOutput = {
@@ -17,6 +17,6 @@ export async function runMentalGameAnalyzer(
     systemPromptOverride ??
     `${mentalGameAnalyzerSystem}\n\n## Grounding — Rotella Principles\n\n${rotellaPrinciples}`;
   const user = `Mental debrief:\n${JSON.stringify(input, null, 2)}`;
-  const text = await callGeminiAgent(system, user, { model: getSpecialistModel() });
+  const text = await callAnthropicAgent(system, user, { model: getSpecialistModel() });
   return parseJsonLoose<MentalGameAnalyzerOutput>(text);
 }

@@ -152,7 +152,7 @@ Course context agent calls the handler directly at runtime. `POST /api/mcp-cours
 ```
 src/
   agents/
-    common.ts              ← callGeminiAgent, callGeminiTool, parseJsonLoose
+    common.ts              ← callAnthropicAgent, callAnthropicTool, parseJsonLoose
     orchestrator.ts        ← LLM tool-calling orchestrator
     stat-interpreter.ts
     mental-game-analyzer.ts
@@ -184,8 +184,8 @@ test-scenarios/
 
 ## Build Order
 
-1. `src/lib/gemini.ts` — Gemini utility + tool-calling support
-2. `src/agents/common.ts` — agent helpers + `callGeminiTool`
+1. `src/lib/anthropic.ts` — Anthropic API utility + tool-calling support
+2. `src/agents/common.ts` — agent helpers + `callAnthropicTool`
 3. Worker agents in `src/agents/*.ts`
 4. `mcp/course-lookup-handler.ts` — RapidAPI integration
 5. `src/agents/orchestrator.ts` — LLM orchestrator

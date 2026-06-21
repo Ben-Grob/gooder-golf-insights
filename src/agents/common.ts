@@ -1,7 +1,7 @@
 import {
-  type GeminiMessage,
-  type GeminiToolDefinition,
-} from "../lib/gemini";
+  type AnthropicMessage,
+  type AnthropicToolDefinition,
+} from "../lib/anthropic-types";
 import {
   callAnthropic,
   callAnthropicCompletion,
@@ -11,7 +11,7 @@ import {
   getSpecialistModel,
 } from "../lib/provider-config";
 
-export type GeminiToolCallResult = {
+export type AnthropicToolCallResult = {
   name: string;
   arguments: Record<string, unknown>;
   tool_call_id: string;
@@ -26,7 +26,7 @@ export type GeminiToolCallResult = {
   };
 };
 
-export async function callGeminiAgent(
+export async function callAnthropicAgent(
   systemPrompt: string,
   userPrompt: string,
   options?: { model?: string; maxRetries?: number }
@@ -43,11 +43,11 @@ export async function callGeminiAgent(
   );
 }
 
-export async function callGeminiTool(
-  messages: GeminiMessage[],
-  tools: GeminiToolDefinition[],
+export async function callAnthropicTool(
+  messages: AnthropicMessage[],
+  tools: AnthropicToolDefinition[],
   options?: { model?: string; maxRetries?: number }
-): Promise<GeminiToolCallResult | null> {
+): Promise<AnthropicToolCallResult | null> {
   const message = await callAnthropicCompletion(messages, {
     ...options,
     model: options?.model ?? getOrchestratorModel(),

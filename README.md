@@ -54,8 +54,6 @@ For P3, prompts look different with the introduction of sub agents. This will al
 | `RAPIDAPI_KEY` | No | RapidAPI golf course lookup; uses fallback when unset |
 | `ANTHROPIC_MODEL_ORCHESTRATOR` | No | Override orchestrator model (default `claude-3-5-sonnet-20241022`) |
 | `ANTHROPIC_MODEL_SPECIALIST` | No | Override specialist-agent model (default `claude-3-5-haiku-20241022`) |
-| `DAILY_CAP_ENABLED` | No | Enable daily cap enforcement (`false` default, monitor-only when unset) |
-| `DAILY_CAP_REQUEST_LIMIT` | No | Daily request threshold used by cap logic (0 disables threshold checks) |
 
 ## What's next
 
@@ -117,8 +115,8 @@ Lovable has a native "add AI features" option that can use OpenAI or other provi
 **Option 2: Groq (best free option)**
 Groq offers a genuinely free tier with fast inference on open-source models like Llama 3. No credit card required, generous limits. You'd tell Lovable to call Groq's API instead of Anthropic's. The output quality is slightly lower than Claude but very usable for this use case.
 
-**Option 3: Google Gemini API**
-Google gives $0/month free tier with Gemini 1.5 Flash — quite capable, free up to a generous limit. Easy to swap in.
+**Option 3: Anthropic API**
+Anthropic offers production-grade models with strong reasoning and tool-calling support for this workflow.
 
 **Option 4: OpenAI free trial credit**
 New OpenAI accounts get a small amount of free credit. Enough to demo the project but it expires.

@@ -3,32 +3,21 @@ import { __resetDailyCapForTests, consumeDailyCap } from "./daily-cap";
 
 describe("daily cap", () => {
   afterEach(() => {
-    delete process.env.DAILY_CAP_ENABLED;
-    delete process.env.DAILY_CAP_REQUEST_LIMIT;
     __resetDailyCapForTests();
   });
 
-  it("does not block when cap logic is disabled", () => {
-    process.env.DAILY_CAP_ENABLED = "false";
-    process.env.DAILY_CAP_REQUEST_LIMIT = "1";
-
+  it("never blocks requests", () => {
     const first = consumeDailyCap("plan_requests", 1);
     const second = consumeDailyCap("plan_requests", 1);
 
+    expect(first.enabled).toBe(false);
+    expect(first.requestLimit).toBe(0);
     expect(first.blocked).toBe(false);
-    expect(second.wouldBlock).toBe(true);
+    expect(first.wouldBlock).toBe(false);
+
+    expect(second.enabled).toBe(false);
+    expect(second.requestLimit).toBe(0);
+    expect(second.wouldBlock).toBe(false);
     expect(second.blocked).toBe(false);
-  });
-
-  it("blocks when cap is enabled and limit exceeded", () => {
-    process.env.DAILY_CAP_ENABLED = "true";
-    process.env.DAILY_CAP_REQUEST_LIMIT = "1";
-
-    const first = consumeDailyCap("plan_requests", 1);
-    const second = consumeDailyCap("plan_requests", 1);
-
-    expect(first.blocked).toBe(false);
-    expect(second.wouldBlock).toBe(true);
-    expect(second.blocked).toBe(true);
   });
 });

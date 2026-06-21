@@ -1,6 +1,6 @@
 import golfKnowledgeBase from "../../docs/golf-knowledge-base.md?raw";
 import practicePlanGeneratorSystem from "../../prompts/practice-plan-generator-prompt.md?raw";
-import { callGeminiAgent } from "./common";
+import { callAnthropicAgent } from "./common";
 import { getSpecialistModel } from "../lib/provider-config";
 
 export async function runPracticePlanGenerator(
@@ -21,5 +21,5 @@ export async function runPracticePlanGenerator(
     user += `\n\nIMPORTANT: The reviewer rejected the previous draft. Address this feedback:\n${input.reviewFeedback}`;
   }
 
-  return callGeminiAgent(system, user, { model: getSpecialistModel() });
+  return callAnthropicAgent(system, user, { model: getSpecialistModel() });
 }

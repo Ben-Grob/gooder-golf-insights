@@ -1,12 +1,11 @@
 // @ts-nocheck
 import type {
-  GeminiCompletionMessage,
-  GeminiMessage,
-  GeminiOptions,
-  GeminiToolCall,
-  GeminiToolDefinition,
-  GeminiToolResultMessage,
-} from "./gemini";
+  AnthropicCompletionMessage,
+  AnthropicMessage,
+  AnthropicOptions,
+  AnthropicToolCall,
+  AnthropicToolDefinition,
+} from "./anthropic-types";
 import { getAnthropicApiKey } from "./provider-config";
 
 type AnthropicTextBlock = {
@@ -32,7 +31,7 @@ type AnthropicMessageBlock =
   | AnthropicToolUseBlock
   | AnthropicToolResultBlock;
 
-type AnthropicMessage = {
+type AnthropicApiMessage = {
   role: "user" | "assistant";
   content: string | AnthropicMessageBlock[];
 };
@@ -49,12 +48,12 @@ function parseToolArguments(raw: string): Record<string, unknown> {
   }
 }
 
-function toAnthropicMessages(messages: GeminiMessage[]): {
+function toAnthropicMessages(messages: AnthropicMessage[]): {
   system: string;
-  messages: AnthropicMessage[];
+  messages: AnthropicApiMessage[];
 } {
   const systemParts: string[] = [];
-  const anthropicMessages: AnthropicMessage[] = [];
+  const anthropicMessages: AnthropicApiMessage[] = [];
   const normalizedMessages = messages as Array<{
     role: string;
     content?: string | null;
@@ -124,16 +123,16 @@ function toAnthropicMessages(messages: GeminiMessage[]): {
   };
 }
 
-function mapToolChoice(value: GeminiOptions["toolChoice"]): { type: "auto" | "any" } | undefined {
+function mapToolChoice(value: AnthropicOptions["toolChoice"]): { type: "auto" | "any" } | undefined {
   if (value === "required") return { type: "any" };
   if (value === "none") return undefined;
   return { type: "auto" };
 }
 
-function fromAnthropicResponse(data: AnthropicResponse): GeminiCompletionMessage {
+function fromAnthropicResponse(data: AnthropicResponse): AnthropicCompletionMessage {
   const content = data.content ?? [];
   const textParts: string[] = [];
-  const toolCalls: GeminiToolCall[] = [];
+  const toolCalls: AnthropicToolCall[] = [];
 
   for (const block of content) {
     if (block.type === "text") {
@@ -160,9 +159,9 @@ function fromAnthropicResponse(data: AnthropicResponse): GeminiCompletionMessage
 }
 
 async function fetchAnthropicCompletion(
-  messages: GeminiMessage[],
-  options?: GeminiOptions
-): Promise<GeminiCompletionMessage> {
+  messages: AnthropicMessage[],
+  options?: AnthropicOptions
+): Promise<AnthropicCompletionMessage> {
   const key = getAnthropicApiKey();
 
   const model = options?.model;
@@ -184,7 +183,7 @@ async function fetchAnthropicCompletion(
         body.system = converted.system;
       }
 
-      const activeTools: GeminiToolDefinition[] = options?.toolChoice === "none" ? [] : options?.tools ?? [];
+      const activeTools: AnthropicToolDefinition[] = options?.toolChoice === "none" ? [] : options?.tools ?? [];
       if (activeTools.length) {
         body.tools = activeTools.map((tool) => ({
           name: tool.function.name,
@@ -233,8 +232,8 @@ async function fetchAnthropicCompletion(
 }
 
 export async function callAnthropic(
-  messages: GeminiMessage[],
-  options?: GeminiOptions
+  messages: AnthropicMessage[],
+  options?: AnthropicOptions
 ): Promise<string> {
   const message = await fetchAnthropicCompletion(messages, options);
   const content = message.content;
@@ -245,8 +244,8 @@ export async function callAnthropic(
 }
 
 export async function callAnthropicCompletion(
-  messages: GeminiMessage[],
-  options?: GeminiOptions
-): Promise<GeminiCompletionMessage> {
+  messages: AnthropicMessage[],
+  options?: AnthropicOptions
+): Promise<AnthropicCompletionMessage> {
   return fetchAnthropicCompletion(messages, options);
 }

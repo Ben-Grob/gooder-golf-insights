@@ -4,10 +4,11 @@ export type CourseLookupResult = {
   slope: number;
   par: number;
   difficultyNote: string;
-  source: "golfcourseapi" | "fallback";
+  source: "rapidapi" | "fallback";
 };
 
-const API_BASE = "https://api.golfcourseapi.com/v1";
+const API_BASE = "https://golf-course-api.p.rapidapi.com";
+const API_HOST = "golf-course-api.p.rapidapi.com";
 
 function fallbackCourse(courseName: string): CourseLookupResult {
   return {
@@ -33,36 +34,27 @@ function difficultyNoteFromSlope(slope: number, par: number): string {
   return `Average difficulty (slope ${slope}, par ${par}). Standard course management applies.`;
 }
 
-type SearchCourse = {
-  id?: number;
-  course_name?: string;
-  club_name?: string;
-};
-
-type SearchResponse = {
-  courses?: SearchCourse[];
-};
-
 type TeeBox = {
-  tee_name?: string;
-  course_rating?: number;
-  slope_rating?: number;
-  par_total?: number;
-  total_yards?: number;
+  tee?: string;
+  slope?: number;
+  handicap?: number;
 };
 
-type CourseDetail = {
-  course_name?: string;
-  club_name?: string;
-  tees?: {
-    male?: TeeBox[];
-    female?: TeeBox[];
-  };
+type ScorecardHole = {
+  Hole?: number;
+  Par?: number;
 };
 
-function pickTee(tees: TeeBox[] | undefined): TeeBox | undefined {
-  if (!tees?.length) return undefined;
-  return [...tees].sort((a, b) => (b.total_yards ?? 0) - (a.total_yards ?? 0))[0];
+type CourseResult = {
+  _id?: string;
+  name?: string;
+  teeBoxes?: TeeBox[];
+  scorecard?: ScorecardHole[];
+};
+
+function calcPar(scorecard: ScorecardHole[] | undefined): number {
+  if (!scorecard?.length) return 72;
+  return scorecard.reduce((sum, hole) => sum + (hole.Par ?? 0), 0);
 }
 
 async function apiFetch(path: string, apiKey: string): Promise<Response> {
@@ -70,7 +62,11 @@ async function apiFetch(path: string, apiKey: string): Promise<Response> {
   const timeout = setTimeout(() => controller.abort(), 8000);
   try {
     return await fetch(`${API_BASE}${path}`, {
-      headers: { Authorization: `Key ${apiKey}` },
+      headers: {
+        "Content-Type": "application/json",
+        "x-rapidapi-host": API_HOST,
+        "x-rapidapi-key": apiKey,
+      },
       signal: controller.signal,
     });
   } finally {
@@ -79,32 +75,27 @@ async function apiFetch(path: string, apiKey: string): Promise<Response> {
 }
 
 export async function lookupGolfCourse(courseName: string): Promise<CourseLookupResult> {
-  const apiKey = process.env.GOLFCOURSE_API_KEY;
+  const apiKey = process.env.RAPIDAPI_KEY;
   if (!apiKey?.trim()) {
     return fallbackCourse(courseName);
   }
 
   try {
-    const searchRes = await apiFetch(
-      `/search?search_query=${encodeURIComponent(courseName)}`,
-      apiKey
-    );
+    const searchRes = await apiFetch(`/search?name=${encodeURIComponent(courseName)}`, apiKey);
     if (!searchRes.ok) return fallbackCourse(courseName);
 
-    const searchData = (await searchRes.json()) as SearchResponse;
-    const match = searchData.courses?.[0];
-    if (!match?.id) return fallbackCourse(courseName);
+    const results = (await searchRes.json()) as CourseResult[];
+    const match =
+      results.find((course) => course.name?.toLowerCase() === courseName.toLowerCase()) ??
+      results.find((course) => course.name?.toLowerCase().includes(courseName.toLowerCase())) ??
+      results[0];
+    if (!match) return fallbackCourse(courseName);
 
-    const detailRes = await apiFetch(`/courses/${match.id}`, apiKey);
-    if (!detailRes.ok) return fallbackCourse(courseName);
-
-    const detail = (await detailRes.json()) as CourseDetail;
-    const tee = pickTee(detail.tees?.male) ?? pickTee(detail.tees?.female);
-    const resolvedName =
-      detail.course_name ?? match.course_name ?? match.club_name ?? courseName;
-    const rating = tee?.course_rating ?? 72;
-    const slope = tee?.slope_rating ?? 128;
-    const par = tee?.par_total ?? 72;
+    const tee = match.teeBoxes?.[0];
+    const resolvedName = match.name ?? courseName;
+    const rating = tee?.handicap ?? 72;
+    const slope = tee?.slope ?? 128;
+    const par = calcPar(match.scorecard);
 
     return {
       courseName: resolvedName,
@@ -112,7 +103,7 @@ export async function lookupGolfCourse(courseName: string): Promise<CourseLookup
       slope,
       par,
       difficultyNote: difficultyNoteFromSlope(slope, par),
-      source: "golfcourseapi",
+      source: "rapidapi",
     };
   } catch {
     return fallbackCourse(courseName);

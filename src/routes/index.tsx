@@ -81,6 +81,7 @@ const INITIAL_FORM: FormState = {
 function Index() {
   const [form, setForm] = useState<FormState>(INITIAL_FORM);
   const [plan, setPlan] = useState<string | null>(null);
+  const [courseNotice, setCourseNotice] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [pipelineStage, setPipelineStage] = useState(0);
   const [error, setError] = useState<string | null>(null);
@@ -107,6 +108,7 @@ function Index() {
     setLoading(true);
     setError(null);
     setPlan(null);
+    setCourseNotice(null);
     try {
       const res = await fetch("/api/plan", {
         method: "POST",
@@ -123,8 +125,9 @@ function Index() {
               : t || "Something went wrong.",
         );
       }
-      const data = (await res.json()) as { plan: string };
+      const data = (await res.json()) as { plan: string; notice?: string };
       setPlan(data.plan);
+      setCourseNotice(data.notice ?? null);
       window.scrollTo({ top: 0, behavior: "smooth" });
     } catch (err) {
       setError(err instanceof Error ? err.message : "Something went wrong.");
@@ -146,6 +149,7 @@ function Index() {
 
   const reset = () => {
     setPlan(null);
+    setCourseNotice(null);
     setForm(INITIAL_FORM);
     setEvaluation({ usefulness: 0, willUse: null });
     setEvaluationSubmitted(false);
@@ -337,6 +341,12 @@ function Index() {
 
         {plan && (
           <section className="space-y-6">
+            {courseNotice && (
+              <div className="rounded-2xl border border-amber-300/50 bg-amber-50 px-5 py-4 text-sm text-amber-950 shadow-sm">
+                {courseNotice}
+              </div>
+            )}
+
             <div className="rounded-2xl border border-accent/30 bg-card p-8 shadow-lg">
               <div className="mb-4 text-xs font-medium uppercase tracking-widest text-accent-foreground/70">
                 Your Practice Plan

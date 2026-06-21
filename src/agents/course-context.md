@@ -6,7 +6,7 @@
 
 **Prompt:** `prompts/course-context-prompt.md`
 
-**MCP:** `mcp/course-lookup-handler.ts` → GolfCourseAPI
+**MCP:** `mcp/course-lookup-handler.ts` → RapidAPI golf course lookup
 
 ## Input
 
@@ -17,10 +17,13 @@ Course name string.
 ```json
 {
   "courseProfile": "string",
-  "strategicFocus": "string"
+  "strategicFocus": "string",
+  "courseFound": true,
+  "source": "rapidapi | fallback",
+  "courseName": "string"
 }
 ```
 
 ## Fallback
 
-When lookup returns `source: "fallback"`, produce adaptable universal course management guidance.
+When lookup returns `source: "fallback"`, produce adaptable universal course management guidance and avoid any course-specific references.

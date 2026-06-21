@@ -15,7 +15,7 @@
   "input": { "..." },
   "stat": { "..." },
   "mental": { "..." },
-  "course": { "..." },
+  "course": { "courseProfile": "...", "strategicFocus": "...", "courseFound": true | false },
   "reviewFeedback": "optional string from reviewer"
 }
 ```
@@ -32,3 +32,4 @@ Markdown with three sections:
 
 - Honor `reviewFeedback` when present
 - Rotella tone; one swing fix maximum
+- If `course.courseFound` is false, omit course-specific information and use universal course-management guidance only

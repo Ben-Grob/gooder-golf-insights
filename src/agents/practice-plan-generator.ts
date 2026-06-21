@@ -11,6 +11,11 @@ export async function runPracticePlanGenerator(
     `${practicePlanGeneratorSystem}\n\n## Grounding — Golf Knowledge Base\n\n${golfKnowledgeBase}`;
 
   let user = `Build the practice plan from this input:\n${JSON.stringify(input, null, 2)}`;
+  const course = input.course as { source?: string; courseFound?: boolean; courseName?: string } | undefined;
+  if (course?.source === "fallback" || course?.courseFound === false) {
+    user +=
+      "\n\nIMPORTANT: The course lookup failed. Do not mention the course name, slope, rating, par, tee boxes, or any course-specific hazards. Keep the plan based on the golfer's round and universal course management only.";
+  }
   if (input.reviewFeedback) {
     user += `\n\nIMPORTANT: The reviewer rejected the previous draft. Address this feedback:\n${input.reviewFeedback}`;
   }

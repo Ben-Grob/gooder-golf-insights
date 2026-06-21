@@ -28,6 +28,9 @@ vi.mock("./course-context", () => ({
   runCourseContext: vi.fn().mockResolvedValue({
     courseProfile: "Moderate course",
     strategicFocus: "Fairway targets",
+    courseFound: true,
+    source: "rapidapi",
+    courseName: "Test Course",
   }),
 }));
 
@@ -44,6 +47,7 @@ vi.mock("../lib/pipeline-log", () => ({
 }));
 
 import { callGeminiTool } from "./common";
+import { runCourseContext } from "./course-context";
 import { runGooderGolfPipeline } from "./orchestrator";
 
 describe("runGooderGolfPipeline", () => {
@@ -148,8 +152,24 @@ describe("runGooderGolfPipeline", () => {
   });
 
   it("runs tool-calling loop and returns generated plan", async () => {
-    const plan = await runGooderGolfPipeline({ courseName: "Test Course" });
-    expect(plan).toContain("Practice Plan");
+    const result = await runGooderGolfPipeline({ courseName: "Test Course" });
+    expect(result.plan).toContain("Practice Plan");
+    expect(result.notice).toBeUndefined();
     expect(callGeminiTool).toHaveBeenCalled();
+  });
+
+  it("returns a separate notice when the course lookup falls back", async () => {
+    vi.mocked(runCourseContext).mockResolvedValueOnce({
+      courseProfile: "General course management",
+      strategicFocus: "Stay adaptable",
+      courseFound: false,
+      source: "fallback",
+      courseName: "Mystery Course",
+    });
+
+    const result = await runGooderGolfPipeline({ courseName: "Mystery Course" });
+
+    expect(result.courseFound).toBe(false);
+    expect(result.notice).toContain("could not be found");
   });
 });

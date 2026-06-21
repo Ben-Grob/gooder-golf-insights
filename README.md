@@ -51,7 +51,7 @@ For P3, prompts look different with the introduction of sub agents. This will al
 | Variable | Required | Purpose |
 |----------|----------|---------|
 | `LOVABLE_API_KEY` | Yes | Gemini API via Lovable gateway |
-| `GOLFCOURSE_API_KEY` | No | [GolfCourseAPI](https://golfcourseapi.com/) course lookup; uses fallback when unset |
+| `RAPIDAPI_KEY` | No | RapidAPI golf course lookup; uses fallback when unset |
 
 ## What's next
 

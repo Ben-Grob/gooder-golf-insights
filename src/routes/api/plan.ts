@@ -17,8 +17,8 @@ export const Route = createFileRoute("/api/plan")({
             );
           }
 
-          const plan = await runGooderGolfPipeline(parsed.data);
-          return new Response(JSON.stringify({ plan }), {
+          const result = await runGooderGolfPipeline(parsed.data);
+          return new Response(JSON.stringify(result), {
             headers: { "Content-Type": "application/json" },
           });
         } catch (err) {

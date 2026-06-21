@@ -110,6 +110,12 @@ export type PipelineStatus =
   | "practice-plan-generator"
   | "reviewer";
 
+export type PipelineResult = {
+  plan: string;
+  notice?: string;
+  courseFound: boolean;
+};
+
 export type SetPipelineStatus = (
   agent: PipelineStatus,
   state: "running" | "done"
@@ -126,7 +132,7 @@ const TOOL_STATUS: Partial<Record<string, PipelineStatus>> = {
 export async function runGooderGolfPipeline(
   input: Record<string, unknown>,
   setStatus?: SetPipelineStatus
-): Promise<string> {
+): Promise<PipelineResult> {
   const courseName = (input.courseName as string) || "Unknown";
 
   const messages: GeminiMessage[] = [
@@ -143,6 +149,7 @@ export async function runGooderGolfPipeline(
   let draft = "";
   let review: ReviewResult | null = null;
   let revisionCount = 0;
+  let notice: string | undefined;
 
   setStatus?.("orchestrator", "running");
   await logPipelineEvent("orchestrator_start", { courseName });
@@ -187,6 +194,9 @@ export async function runGooderGolfPipeline(
       mental = toolResult as MentalGameAnalyzerOutput;
     } else if (toolCall.name === "run_course_context") {
       course = toolResult as CourseContextOutput;
+      if (!course.courseFound) {
+        notice = `Course data for ${course.courseName || courseName} could not be found. The plan below uses universal course-management guidance.`;
+      }
     } else if (toolCall.name === "run_practice_plan_generator") {
       draft = toolResult as string;
     } else if (toolCall.name === "run_reviewer") {
@@ -223,7 +233,11 @@ export async function runGooderGolfPipeline(
     throw new Error("Pipeline completed without generating a practice plan");
   }
 
-  return draft;
+  return {
+    plan: draft,
+    notice,
+    courseFound: course?.courseFound ?? true,
+  };
 }
 
 async function dispatchTool(

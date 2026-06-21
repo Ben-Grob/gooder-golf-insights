@@ -19,43 +19,49 @@ describe("lookupGolfCourse", () => {
   });
 
   it("returns fallback when search returns no courses", async () => {
-    process.env.GOLFCOURSE_API_KEY = "test-key";
+    process.env.RAPIDAPI_KEY = "test-key";
     vi.mocked(fetch).mockResolvedValueOnce({
       ok: true,
-      json: async () => ({ courses: [] }),
+      json: async () => ([]),
     } as Response);
 
     const result = await lookupGolfCourse("Unknown Course XYZ");
     expect(result.source).toBe("fallback");
   });
 
-  it("maps GolfCourseAPI response to structured result", async () => {
-    process.env.GOLFCOURSE_API_KEY = "test-key";
+  it("maps RapidAPI response to structured result", async () => {
+    process.env.RAPIDAPI_KEY = "test-key";
     vi.mocked(fetch)
       .mockResolvedValueOnce({
         ok: true,
-        json: async () => ({ courses: [{ id: 42, course_name: "Test Links" }] }),
-      } as Response)
-      .mockResolvedValueOnce({
-        ok: true,
         json: async () => ({
-          course_name: "Test Links",
-          tees: {
-            male: [
-              {
-                tee_name: "Blue",
-                course_rating: 74.2,
-                slope_rating: 132,
-                par_total: 72,
-                total_yards: 6800,
-              },
-            ],
-          },
+          name: "Test Links",
+          teeBoxes: [{ tee: "Members", slope: 132, handicap: 74.2 }],
+          scorecard: [
+            { Hole: 1, Par: 4 },
+            { Hole: 2, Par: 5 },
+            { Hole: 3, Par: 4 },
+            { Hole: 4, Par: 3 },
+            { Hole: 5, Par: 4 },
+            { Hole: 6, Par: 3 },
+            { Hole: 7, Par: 4 },
+            { Hole: 8, Par: 5 },
+            { Hole: 9, Par: 4 },
+            { Hole: 10, Par: 4 },
+            { Hole: 11, Par: 4 },
+            { Hole: 12, Par: 3 },
+            { Hole: 13, Par: 5 },
+            { Hole: 14, Par: 4 },
+            { Hole: 15, Par: 5 },
+            { Hole: 16, Par: 3 },
+            { Hole: 17, Par: 4 },
+            { Hole: 18, Par: 4 },
+          ],
         }),
       } as Response);
 
     const result = await lookupGolfCourse("Test Links");
-    expect(result.source).toBe("golfcourseapi");
+    expect(result.source).toBe("rapidapi");
     expect(result.courseRating).toBe(74.2);
     expect(result.slope).toBe(132);
     expect(result.par).toBe(72);
@@ -63,7 +69,7 @@ describe("lookupGolfCourse", () => {
   });
 
   it("returns fallback on API error", async () => {
-    process.env.GOLFCOURSE_API_KEY = "test-key";
+    process.env.RAPIDAPI_KEY = "test-key";
     vi.mocked(fetch).mockResolvedValueOnce({
       ok: false,
       json: async () => ({}),

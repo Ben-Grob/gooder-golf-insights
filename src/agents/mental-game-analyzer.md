@@ -25,4 +25,5 @@ Mental reflection fields: score, pattern, thoughts, response.
 ## Constraints
 
 - Rotella-style process language
+- Course-agnostic: never reference course lookup details
 - JSON only

@@ -14,6 +14,7 @@ Rules:
 - Focus on mindset, emotion, pre-shot routine, or response after mistakes.
 - Use Rotella-style language: process, commitment, acceptance, present focus.
 - If the input shows no obvious negative pattern, identify the best positive tendency to reinforce.
+- Course-agnostic: do not reference course lookup details.
 
 Example output:
 {

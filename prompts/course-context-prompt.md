@@ -13,7 +13,7 @@ Rules:
 - Analyze the course metrics (Rating, Slope, Par) alongside the provided difficulty note[cite: 1]. 
 - Contextualize the course difficulty for the subsequent practice plan generator[cite: 1]. For example, a high slope rating means mistakes will be amplified; translate this into how a golfer must manage their expectations.
 - Use language that bridges course design with Dr. Bob Rotella’s coaching philosophy[cite: 1, 4] (e.g., target selection, accepting penal hazards, or maintaining a disciplined routine on highly sloped greens[cite: 4]).
-- If the tool lookup fails or returns a neutral fallback context, generate a baseline profile emphasizing adaptable, universal course management[cite: 1].
+- If the tool lookup fails or returns a neutral fallback context, generate a baseline profile emphasizing adaptable, universal course management[cite: 1]. Do not mention course-specific numbers, hazards, tee-box details, or layout specifics in the fallback response.
 
 Example output:
 {

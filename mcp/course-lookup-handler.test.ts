@@ -9,6 +9,7 @@ describe("lookupGolfCourse", () => {
   afterEach(() => {
     vi.unstubAllGlobals();
     vi.restoreAllMocks();
+    delete process.env.RAPIDAPI_KEY;
     delete process.env.GOLFCOURSE_API_KEY;
   });
 
@@ -34,30 +35,32 @@ describe("lookupGolfCourse", () => {
     vi.mocked(fetch)
       .mockResolvedValueOnce({
         ok: true,
-        json: async () => ({
-          name: "Test Links",
-          teeBoxes: [{ tee: "Members", slope: 132, handicap: 74.2 }],
-          scorecard: [
-            { Hole: 1, Par: 4 },
-            { Hole: 2, Par: 5 },
-            { Hole: 3, Par: 4 },
-            { Hole: 4, Par: 3 },
-            { Hole: 5, Par: 4 },
-            { Hole: 6, Par: 3 },
-            { Hole: 7, Par: 4 },
-            { Hole: 8, Par: 5 },
-            { Hole: 9, Par: 4 },
-            { Hole: 10, Par: 4 },
-            { Hole: 11, Par: 4 },
-            { Hole: 12, Par: 3 },
-            { Hole: 13, Par: 5 },
-            { Hole: 14, Par: 4 },
-            { Hole: 15, Par: 5 },
-            { Hole: 16, Par: 3 },
-            { Hole: 17, Par: 4 },
-            { Hole: 18, Par: 4 },
-          ],
-        }),
+        json: async () => ([
+          {
+            name: "Test Links",
+            teeBoxes: [{ tee: "Members", slope: 132, handicap: 74.2 }],
+            scorecard: [
+              { Hole: 1, Par: 4 },
+              { Hole: 2, Par: 5 },
+              { Hole: 3, Par: 4 },
+              { Hole: 4, Par: 3 },
+              { Hole: 5, Par: 4 },
+              { Hole: 6, Par: 3 },
+              { Hole: 7, Par: 4 },
+              { Hole: 8, Par: 5 },
+              { Hole: 9, Par: 4 },
+              { Hole: 10, Par: 4 },
+              { Hole: 11, Par: 4 },
+              { Hole: 12, Par: 3 },
+              { Hole: 13, Par: 5 },
+              { Hole: 14, Par: 4 },
+              { Hole: 15, Par: 5 },
+              { Hole: 16, Par: 3 },
+              { Hole: 17, Par: 4 },
+              { Hole: 18, Par: 4 },
+            ],
+          },
+        ]),
       } as Response);
 
     const result = await lookupGolfCourse("Test Links");

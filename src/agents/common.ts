@@ -1,9 +1,15 @@
 import {
-  callGemini,
-  callGeminiCompletion,
   type GeminiMessage,
   type GeminiToolDefinition,
 } from "../lib/gemini";
+import {
+  callAnthropic,
+  callAnthropicCompletion,
+} from "../lib/anthropic";
+import {
+  getOrchestratorModel,
+  getSpecialistModel,
+} from "../lib/provider-config";
 
 export type GeminiToolCallResult = {
   name: string;
@@ -25,12 +31,15 @@ export async function callGeminiAgent(
   userPrompt: string,
   options?: { model?: string; maxRetries?: number }
 ): Promise<string> {
-  return callGemini(
+  return callAnthropic(
     [
       { role: "system", content: systemPrompt },
       { role: "user", content: userPrompt },
     ],
-    options
+    {
+      ...options,
+      model: options?.model ?? getSpecialistModel(),
+    }
   );
 }
 
@@ -39,8 +48,9 @@ export async function callGeminiTool(
   tools: GeminiToolDefinition[],
   options?: { model?: string; maxRetries?: number }
 ): Promise<GeminiToolCallResult | null> {
-  const message = await callGeminiCompletion(messages, {
+  const message = await callAnthropicCompletion(messages, {
     ...options,
+    model: options?.model ?? getOrchestratorModel(),
     tools,
     toolChoice: "required",
   });

@@ -1,6 +1,7 @@
 import courseContextSystem from "../../prompts/course-context-prompt.md?raw";
 import { lookupGolfCourse } from "../../mcp/course-lookup-handler";
 import { callGeminiAgent, parseJsonLoose } from "./common";
+import { getSpecialistModel } from "../lib/provider-config";
 
 type CourseLookupSource = "rapidapi" | "fallback";
 
@@ -40,7 +41,7 @@ export async function runCourseContext(
 
   const system = systemPromptOverride ?? courseContextSystem;
   const user = `Course lookup payload:\n${JSON.stringify(lookup, null, 2)}`;
-  const text = await callGeminiAgent(system, user);
+  const text = await callGeminiAgent(system, user, { model: getSpecialistModel() });
   const parsed = parseJsonLoose<CourseContextAgentOutput>(text);
 
   return {

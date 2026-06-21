@@ -1,7 +1,7 @@
 # Gooder Golf — Architecture
 
 This document describes the architecture for Gooder Golf Insights: a multi-agent pipeline
-with an LLM orchestrator that routes work to specialist agents via Gemini tool-calling.
+with an LLM orchestrator that routes work to specialist agents via Anthropic tool-calling.
 
 ---
 
@@ -21,14 +21,14 @@ POST /api/plan
     │
     ▼
 Orchestrator Agent (src/agents/orchestrator.ts)
-Gemini tool-calling loop
+Anthropic tool-calling loop
 prompts/orchestrator-prompt.md
     │
-    ├── tool: run_stat_interpreter ──► Agent 2 (Gemini)
-    ├── tool: run_mental_game_analyzer ──► Agent 3 (Gemini)
-    ├── tool: run_course_context ──► Agent 4 (Gemini + MCP lookup)
-    ├── tool: run_practice_plan_generator ──► Agent 5 (Gemini)
-    ├── tool: run_reviewer ──► Agent 6 (Gemini)
+    ├── tool: run_stat_interpreter ──► Agent 2 (Claude Haiku)
+    ├── tool: run_mental_game_analyzer ──► Agent 3 (Claude Haiku)
+    ├── tool: run_course_context ──► Agent 4 (Claude Haiku + MCP lookup)
+    ├── tool: run_practice_plan_generator ──► Agent 5 (Claude Haiku)
+    ├── tool: run_reviewer ──► Agent 6 (Claude Haiku)
     └── tool: finish
     │
     ▼
@@ -50,7 +50,7 @@ and an implementation in `src/agents/*.ts`.
 
 ### Orchestrator (`src/agents/orchestrator.md`)
 - **Role:** LLM coordinator and quality gatekeeper
-- **Does:** Runs a Gemini tool-calling loop; dispatches to agents 2–6; manages review revision nudge; returns final plan
+- **Does:** Runs a Claude Sonnet tool-calling loop; dispatches to agents 2–6; manages review revision nudge; returns final plan
 - **Does not:** Write practice plan content directly
 - **Prompt:** `prompts/orchestrator-prompt.md`
 - **Implemented in:** `src/agents/orchestrator.ts` as `runGooderGolfPipeline()`
@@ -70,7 +70,7 @@ and an implementation in `src/agents/*.ts`.
 ### Agent 4 — Course Context (`src/agents/course-context.md`)
 - **Input:** Course name string
 - **Output:** `{ courseProfile, strategicFocus }`
-- **Method:** Calls `lookupGolfCourse()` in `mcp/course-lookup-handler.ts` (GolfCourseAPI)
+- **Method:** Calls `lookupGolfCourse()` in `mcp/course-lookup-handler.ts` (RapidAPI)
 - **Prompt:** `prompts/course-context-prompt.md`
 - **Note:** Handler never throws; returns fallback on API failure
 
@@ -90,17 +90,17 @@ and an implementation in `src/agents/*.ts`.
 
 ## MCP Tool — Course Lookup
 
-**Purpose:** Real course rating, slope, and par from GolfCourseAPI instead of model guesswork.
+**Purpose:** Real course rating, slope, and par from RapidAPI golf course lookup instead of model guesswork.
 
 **Location:** `mcp/`
 
 | File | Purpose |
 |---|---|
-| `course-lookup-handler.ts` | Search + details via GolfCourseAPI; fallback on error |
+| `course-lookup-handler.ts` | Search via RapidAPI golf course endpoint; fallback on error |
 | `course-lookup-tool.ts` | Tool schema for MCP registration |
 | `course-lookup-server.ts` | Registers tool with MCP runtime |
 
-**Environment:** `GOLFCOURSE_API_KEY` (header: `Authorization: Key …`)
+**Environment:** `RAPIDAPI_KEY` (headers: `x-rapidapi-key`, `x-rapidapi-host`)
 
 **Returns:**
 ```typescript
@@ -110,7 +110,7 @@ and an implementation in `src/agents/*.ts`.
   slope: number;
   par: number;
   difficultyNote: string;
-  source: "golfcourseapi" | "fallback";
+  source: "rapidapi" | "fallback";
 }
 ```
 
@@ -124,7 +124,7 @@ Course context agent calls the handler directly at runtime. `POST /api/mcp-cours
 2. Route validates body (Zod) and calls `runGooderGolfPipeline(input)`
 3. Orchestrator LLM receives debrief JSON and available tools
 4. LLM invokes worker tools in sequence (typically stat → mental → course → plan → review)
-5. Agent 4 handler calls GolfCourseAPI search + course details
+5. Agent 4 handler calls RapidAPI course search
 6. On reviewer rejection, orchestrator nudges LLM to regenerate plan with `reviewFeedback`
 7. LLM calls `finish`; orchestrator returns stored draft plan
 8. Frontend renders markdown
@@ -139,7 +139,7 @@ Course context agent calls the handler directly at runtime. `POST /api/mcp-cours
 | LLM orchestrator | Done — tool-calling loop in `src/agents/orchestrator.ts` |
 | Worker agents | Done — `src/agents/*.ts` |
 | Prompts | Done — `prompts/*.md` |
-| MCP course lookup | Done — GolfCourseAPI + fallback |
+| MCP course lookup | Done — RapidAPI + fallback |
 | Grounding docs | Done — injected in mental + plan agents |
 | Review loop | Done — max 1 revision via orchestrator nudge |
 | Feedback log | Done — `memory/feedback-log.md` + server logging |
@@ -162,7 +162,9 @@ src/
     *.md                   ← role definitions (design specs)
   lib/
     pipeline.ts            ← re-exports runGooderGolfPipeline
-    gemini.ts              ← Gemini API + tool-calling
+    anthropic.ts           ← Anthropic API + tool-calling
+    provider-config.ts     ← model routing + cap config parsing
+    daily-cap.ts           ← daily request cap accounting (monitor/enforce)
     pipeline-log.ts        ← server-side feedback logging
     debrief-schema.ts      ← Zod schema for API input
   routes/
@@ -185,6 +187,6 @@ test-scenarios/
 1. `src/lib/gemini.ts` — Gemini utility + tool-calling support
 2. `src/agents/common.ts` — agent helpers + `callGeminiTool`
 3. Worker agents in `src/agents/*.ts`
-4. `mcp/course-lookup-handler.ts` — GolfCourseAPI integration
+4. `mcp/course-lookup-handler.ts` — RapidAPI integration
 5. `src/agents/orchestrator.ts` — LLM orchestrator
 6. Grounding injection, Zod validation, logging, tests

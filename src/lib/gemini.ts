@@ -1,7 +1,7 @@
-// Gemini API utility — chat completions + tool-calling via Lovable AI gateway
+// Gemini API utility — direct Google Gemini API with text + tool-calling support
 
 export type GeminiTextMessage = {
-  role: "system" | "user" | "assistant";
+  role: "system" | "user";
   content: string;
 };
 
@@ -61,33 +61,208 @@ export type GeminiOptions = {
   toolChoice?: "auto" | "none" | "required";
 };
 
+type GoogleGeminiPart =
+  | { text: string }
+  | {
+      functionCall: {
+        name: string;
+        args?: Record<string, unknown>;
+      };
+    }
+  | {
+      functionResponse: {
+        name: string;
+        response: Record<string, unknown>;
+      };
+    };
+
+type GoogleGeminiContent = {
+  role: "user" | "model";
+  parts: GoogleGeminiPart[];
+};
+
+type GoogleGeminiResponse = {
+  candidates?: Array<{
+    content?: {
+      parts?: GoogleGeminiPart[];
+    };
+  }>;
+};
+
+function parseToolMessageContent(content: string): Record<string, unknown> {
+  try {
+    return JSON.parse(content) as Record<string, unknown>;
+  } catch {
+    return { content };
+  }
+}
+
+function toGoogleGeminiPayload(messages: GeminiMessage[], options?: GeminiOptions): Record<string, unknown> {
+  const systemTexts = messages
+    .filter((m): m is GeminiTextMessage => "content" in m && m.role === "system")
+    .map((m) => m.content);
+
+  const toolCallNameById = new Map<string, string>();
+  const contents: GoogleGeminiContent[] = [];
+
+  for (const message of messages) {
+    if (message.role === "system") {
+      continue;
+    }
+
+    if (message.role === "user") {
+      contents.push({ role: "user", parts: [{ text: message.content }] });
+      continue;
+    }
+
+    if ((message as { role: string }).role === "assistant") {
+      const assistantMessage = message as GeminiAssistantMessage;
+      const parts: GoogleGeminiPart[] = [];
+
+      if (
+        typeof assistantMessage.content === "string" &&
+        assistantMessage.content.trim()
+      ) {
+        parts.push({ text: assistantMessage.content });
+      }
+
+      const assistantToolCalls = assistantMessage.tool_calls ?? [];
+      if (assistantToolCalls.length) {
+        for (const toolCall of assistantToolCalls) {
+          toolCallNameById.set(toolCall.id, toolCall.function.name);
+          let args: Record<string, unknown> = {};
+          try {
+            args = JSON.parse(toolCall.function.arguments || "{}") as Record<string, unknown>;
+          } catch {
+            args = {};
+          }
+          parts.push({
+            functionCall: {
+              name: toolCall.function.name,
+              args,
+            },
+          });
+        }
+      }
+
+      if (parts.length) {
+        contents.push({ role: "model", parts });
+      }
+      continue;
+    }
+
+    if (message.role === "tool") {
+      const functionName = toolCallNameById.get(message.tool_call_id) ?? "unknown_tool";
+      const parsedResponse = parseToolMessageContent(message.content);
+      contents.push({
+        role: "user",
+        parts: [
+          {
+            functionResponse: {
+              name: functionName,
+              response: parsedResponse,
+            },
+          },
+        ],
+      });
+    }
+  }
+
+  const payload: Record<string, unknown> = {
+    contents,
+  };
+
+  if (systemTexts.length) {
+    payload.systemInstruction = {
+      parts: [{ text: systemTexts.join("\n\n") }],
+    };
+  }
+
+  if (options?.tools?.length) {
+    payload.tools = [
+      {
+        functionDeclarations: options.tools.map((tool) => ({
+          name: tool.function.name,
+          description: tool.function.description,
+          parameters: tool.function.parameters,
+        })),
+      },
+    ];
+
+    const mode =
+      options.toolChoice === "required"
+        ? "ANY"
+        : options.toolChoice === "none"
+          ? "NONE"
+          : "AUTO";
+    payload.toolConfig = {
+      functionCallingConfig: {
+        mode,
+      },
+    };
+  }
+
+  return payload;
+}
+
+function fromGoogleGeminiResponse(data: GoogleGeminiResponse): GeminiCompletionResponse {
+  const parts = data.candidates?.[0]?.content?.parts ?? [];
+  const textParts: string[] = [];
+  const toolCalls: GeminiToolCall[] = [];
+
+  for (const part of parts) {
+    if ("text" in part && typeof part.text === "string") {
+      textParts.push(part.text);
+    } else if ("functionCall" in part) {
+      toolCalls.push({
+        id: `tool_${toolCalls.length}_${Date.now()}`,
+        type: "function",
+        function: {
+          name: part.functionCall.name,
+          arguments: JSON.stringify(part.functionCall.args ?? {}),
+        },
+      });
+    }
+  }
+
+  return {
+    choices: [
+      {
+        message: {
+          role: "assistant",
+          content: textParts.length ? textParts.join("\n") : null,
+          tool_calls: toolCalls.length ? toolCalls : undefined,
+        },
+      },
+    ],
+  };
+}
+
 async function fetchCompletion(
   messages: GeminiMessage[],
   options?: GeminiOptions
 ): Promise<GeminiCompletionResponse> {
-  const key = process.env.LOVABLE_API_KEY;
-  if (!key) throw new Error("Missing LOVABLE_API_KEY");
+  const key = process.env.GEMINI_API_KEY ?? process.env.GEMENI_API_KEY;
+  if (!key) throw new Error("Missing GEMINI_API_KEY");
 
-  const model = options?.model ?? "google/gemini-3-flash-preview";
+  const model = options?.model ?? "gemini-2.5-flash";
   const maxRetries = options?.maxRetries ?? 1;
   let lastError: Error | null = null;
 
   for (let attempt = 0; attempt <= maxRetries; attempt++) {
     try {
-      const body: Record<string, unknown> = { model, messages };
-      if (options?.tools?.length) {
-        body.tools = options.tools;
-        body.tool_choice = options.toolChoice ?? "auto";
-      }
+      const body = toGoogleGeminiPayload(messages, options);
 
-      const res = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
+      const res = await fetch(
+        `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}:generateContent?key=${encodeURIComponent(key)}`,
+        {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "Lovable-API-Key": key,
         },
         body: JSON.stringify(body),
-      });
+        }
+      );
 
       if (!res.ok) {
         const text = await res.text();
@@ -96,7 +271,8 @@ async function fetchCompletion(
         throw lastError;
       }
 
-      return (await res.json()) as GeminiCompletionResponse;
+      const data = (await res.json()) as GoogleGeminiResponse;
+      return fromGoogleGeminiResponse(data);
     } catch (err) {
       lastError = err instanceof Error ? err : new Error(String(err));
       if (attempt < maxRetries) {

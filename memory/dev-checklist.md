@@ -1,6 +1,6 @@
 # Dev Checklist — Agentic Pipeline (Gooder Golf)
 
-Phased checklist for the LLM orchestrator pipeline + GolfCourseAPI MCP integration.
+Phased checklist for the LLM orchestrator pipeline + RapidAPI MCP integration.
 See [architecture.md](../architecture.md) for the target design.
 
 ---
@@ -28,11 +28,11 @@ See [architecture.md](../architecture.md) for the target design.
 - [x] `setStatus` callback for UI
 - [x] `src/lib/pipeline.ts` re-exports orchestrator
 
-## Phase 4 — GolfCourseAPI MCP course lookup
+## Phase 4 — RapidAPI MCP course lookup
 
-- [x] `GOLFCOURSE_API_KEY` documented in README
+- [x] `RAPIDAPI_KEY` documented in README
 - [x] Typed `CourseLookupResult` in `mcp/course-lookup-handler.ts`
-- [x] Search + details via GolfCourseAPI
+- [x] Search via RapidAPI course endpoint
 - [x] Rule-based `difficultyNote` from slope
 - [x] Fallback on error (never throws)
 - [x] Finalize `mcp/course-lookup-tool.ts` and `course-lookup-server.ts`
@@ -54,8 +54,8 @@ See [architecture.md](../architecture.md) for the target design.
 ## Phase 7 — Test and validate
 
 - [x] Unit tests — `lookupGolfCourse`, `parseJsonLoose`, orchestrator dispatch
-- [ ] Manual E2E — run `test-scenarios/round-scenarios.md` (requires `LOVABLE_API_KEY`)
-- [ ] MCP smoke test — `POST /api/mcp-course` with real `GOLFCOURSE_API_KEY`
+- [ ] Manual E2E — run `test-scenarios/round-scenarios.md` (requires `GEMINI_API_KEY`)
+- [ ] MCP smoke test — `POST /api/mcp-course` with real `RAPIDAPI_KEY`
 - [x] Evaluation template — `evaluations/eval3-agentic-pipeline.md`
 
 ---
@@ -64,8 +64,8 @@ See [architecture.md](../architecture.md) for the target design.
 
 | Variable | Required | Purpose |
 |----------|----------|---------|
-| `LOVABLE_API_KEY` | Yes | Gemini via Lovable AI gateway |
-| `GOLFCOURSE_API_KEY` | No | GolfCourseAPI lookup; omit for fallback data |
+| `GEMINI_API_KEY` | Yes | Gemini via direct Google API |
+| `RAPIDAPI_KEY` | No | RapidAPI course lookup; omit for fallback data |
 
 ---
 

@@ -2,6 +2,8 @@ import "@tanstack/react-start";
 import { createFileRoute } from "@tanstack/react-router";
 import { debriefSchema } from "../../lib/debrief-schema";
 import { runGooderGolfPipeline } from "../../lib/pipeline";
+import { consumeDailyCap } from "../../lib/daily-cap";
+import { logPipelineEvent } from "../../lib/pipeline-log";
 
 export const Route = createFileRoute("/api/plan")({
   server: {
@@ -14,6 +16,25 @@ export const Route = createFileRoute("/api/plan")({
             return new Response(
               JSON.stringify({ error: parsed.error.flatten().fieldErrors }),
               { status: 400, headers: { "Content-Type": "application/json" } }
+            );
+          }
+
+          const cap = consumeDailyCap("plan_requests", 1);
+          if (cap.wouldBlock) {
+            await logPipelineEvent("daily_cap_threshold_reached", {
+              ...cap,
+              mode: cap.enabled ? "enforce" : "monitor",
+            });
+          }
+          if (cap.blocked) {
+            return new Response(
+              JSON.stringify({
+                error: "Daily request cap reached. Please try again tomorrow.",
+              }),
+              {
+                status: 429,
+                headers: { "Content-Type": "application/json" },
+              }
             );
           }
 

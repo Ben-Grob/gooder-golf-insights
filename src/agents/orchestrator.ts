@@ -11,6 +11,7 @@ import type { StatInterpreterOutput } from "./stat-interpreter";
 import { runStatInterpreter } from "./stat-interpreter";
 import type { GeminiMessage, GeminiToolDefinition } from "../lib/gemini";
 import { logPipelineEvent } from "../lib/pipeline-log";
+import { getOrchestratorModel } from "../lib/provider-config";
 
 const tools: GeminiToolDefinition[] = [
   {
@@ -155,7 +156,9 @@ export async function runGooderGolfPipeline(
   await logPipelineEvent("orchestrator_start", { courseName });
 
   for (let loop = 0; loop < 10; loop++) {
-    const toolCall = await callGeminiTool(messages, tools);
+    const toolCall = await callGeminiTool(messages, tools, {
+      model: getOrchestratorModel(),
+    });
     if (!toolCall?.name) break;
 
     await logPipelineEvent("orchestrator_tool_call", {

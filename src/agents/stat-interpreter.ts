@@ -1,5 +1,6 @@
 import statInterpreterSystem from "../../prompts/stat-interpreter-prompt.md?raw";
 import { callGeminiAgent, parseJsonLoose } from "./common";
+import { getSpecialistModel } from "../lib/provider-config";
 
 export type StatInterpreterOutput = {
   diagnosis: string;
@@ -13,6 +14,6 @@ export async function runStatInterpreter(
 ): Promise<StatInterpreterOutput> {
   const system = systemPromptOverride ?? statInterpreterSystem;
   const user = `Round stats:\n${JSON.stringify(input, null, 2)}`;
-  const text = await callGeminiAgent(system, user);
+  const text = await callGeminiAgent(system, user, { model: getSpecialistModel() });
   return parseJsonLoose<StatInterpreterOutput>(text);
 }

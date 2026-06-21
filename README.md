@@ -1,8 +1,8 @@
 # Gooder Golf
 
 ## TLDR for P3 (6/14)
-- Multi-agent pipeline with LLM orchestrator (Gemini tool-calling)
-- GolfCourseAPI MCP for course rating/slope/par lookup
+- Multi-agent pipeline with LLM orchestrator (Anthropic tool-calling)
+- RapidAPI MCP course lookup for course rating/slope/par context
 - Per-agent TypeScript modules in `src/agents/`
 
 ## What it does
@@ -13,9 +13,9 @@ This includes mental thoughts and a practice plan. Fix
 Golf is addicting, but imporvement is non-linear. With professional instruction being expensive, this aims to give golfers an easy way of improving that is specific to thier game.
 
 ## How it works
-  - Lovable AI Gateway → Gemini 3 Flash
+  - Direct Anthropic API → Sonnet (orchestrator) + Haiku (specialist agents)
   - LLM orchestrator routes debrief through specialist agents (stat, mental, course, plan, review)
-  - GolfCourseAPI MCP supplies course rating/slope/par for course context agent
+  - RapidAPI course lookup supplies course rating/slope/par context for the course context agent
   - User enters round stats and answers four reflection questions
     
 ## Prompt Design Decisions
@@ -50,8 +50,12 @@ For P3, prompts look different with the introduction of sub agents. This will al
 
 | Variable | Required | Purpose |
 |----------|----------|---------|
-| `LOVABLE_API_KEY` | Yes | Gemini API via Lovable gateway |
+| `ANTHROPIC_API_KEY` | Yes | Direct Anthropic API key |
 | `RAPIDAPI_KEY` | No | RapidAPI golf course lookup; uses fallback when unset |
+| `ANTHROPIC_MODEL_ORCHESTRATOR` | No | Override orchestrator model (default `claude-3-5-sonnet-20241022`) |
+| `ANTHROPIC_MODEL_SPECIALIST` | No | Override specialist-agent model (default `claude-3-5-haiku-20241022`) |
+| `DAILY_CAP_ENABLED` | No | Enable daily cap enforcement (`false` default, monitor-only when unset) |
+| `DAILY_CAP_REQUEST_LIMIT` | No | Daily request threshold used by cap logic (0 disables threshold checks) |
 
 ## What's next
 

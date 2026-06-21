@@ -35,4 +35,4 @@ Markdown practice plan string (same contract as `POST /api/plan`).
 
 - One tool call per orchestrator turn
 - Max 1 plan revision after reviewer rejection
-- Does not call GolfCourseAPI directly — delegates to course context agent
+- Does not call course lookup APIs directly — delegates to course context agent

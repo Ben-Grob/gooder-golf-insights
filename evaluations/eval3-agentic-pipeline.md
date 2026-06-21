@@ -1,7 +1,7 @@
 # Evaluation 3 — Agentic Pipeline (P3)
 
 **Date:** 2026-06-14  
-**Scope:** LLM orchestrator + GolfCourseAPI MCP + multi-agent pipeline
+**Scope:** LLM orchestrator + RapidAPI MCP + multi-agent pipeline
 
 ## Automated tests
 
@@ -13,11 +13,11 @@ Run: `npm test`
 
 ## Manual E2E (requires API keys)
 
-Set `LOVABLE_API_KEY` and optionally `GOLFCOURSE_API_KEY`, then:
+Set `GEMINI_API_KEY` and optionally `RAPIDAPI_KEY`, then:
 
 1. `npm run dev`
 2. Submit debrief from `test-scenarios/round-scenarios.md` (pick 3 scenarios)
-3. `POST /api/mcp-course` with `{ "courseName": "Pebble Beach" }` — verify `source: "golfcourseapi"` when key present
+3. `POST /api/mcp-course` with `{ "courseName": "Pebble Beach" }` — verify `source: "rapidapi"` when key present
 
 ## Criteria
 

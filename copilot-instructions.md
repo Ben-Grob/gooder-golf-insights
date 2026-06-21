@@ -29,7 +29,7 @@ Dr. Bob Rotella's mental game philosophy from *Golf is Not a Game of Perfect*.
 | Styling | Tailwind CSS v4 |
 | Forms | react-hook-form + zod |
 | UI Primitives | Radix UI |
-| AI Provider | Google Gemini API (gemini-1.5-flash) |
+| AI Provider | Google Gemini API (direct, gemini-2.5-flash default) |
 | Database | Supabase (present but not yet primary storage) |
 | Markdown rendering | react-markdown |
 

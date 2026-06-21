@@ -12,4 +12,30 @@ export default defineConfig({
   tanstackStart: {
     server: { entry: "server" },
   },
+  vite: {
+    optimizeDeps: {
+      // Pre-bundle heavy/lazy-discovered deps so Vite doesn't re-optimize
+      // mid-session (which forces a full reload and breaks in-flight chunks).
+      include: [
+        "@supabase/supabase-js",
+        "react-hook-form",
+        "@hookform/resolvers",
+        "zod",
+        "recharts",
+        "react-markdown",
+        "react-day-picker",
+        "embla-carousel-react",
+        "react-resizable-panels",
+        "vaul",
+        "sonner",
+        "input-otp",
+        "cmdk",
+        "lucide-react",
+        "date-fns",
+        "class-variance-authority",
+        "clsx",
+        "tailwind-merge",
+      ],
+    },
+  },
 });

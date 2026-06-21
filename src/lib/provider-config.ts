@@ -1,5 +1,5 @@
-export const DEFAULT_ORCHESTRATOR_MODEL = "claude-3-5-sonnet-20241022";
-export const DEFAULT_SPECIALIST_MODEL = "claude-3-5-haiku-20241022";
+export const DEFAULT_ORCHESTRATOR_MODEL = "claude-sonnet-4-6";
+export const DEFAULT_SPECIALIST_MODEL = "claude-haiku-4-5-20251001";
 
 function parseBoolean(value: string | undefined, defaultValue: boolean): boolean {
   if (value == null) return defaultValue;

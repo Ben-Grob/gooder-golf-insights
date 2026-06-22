@@ -1,10 +1,5 @@
 # Gooder Golf
 
-## TLDR for P3 (6/14)
-- Multi-agent pipeline with LLM orchestrator (Anthropic tool-calling)
-- RapidAPI MCP course lookup for course rating/slope/par context
-- Per-agent TypeScript modules in `src/agents/`
-
 ## What it does
 Gooder golf debriefs the round of a golfer by interviewing the physical and mental troubles and sucesses to help them improve their score.
 This includes mental thoughts and a practice plan. Fix
@@ -30,7 +25,6 @@ Golf is addicting, but imporvement is non-linear. With professional instruction 
   - Scores can be given by users on a scale from 1-5, and reply with wheather or not they will use the feedback. Currently the feeddback is not stored anywhere beyond the loaded page.
   - Second round of evaluations avereaged a score of 3.6 for responses, with all of them having at least one point to take away that would be helpful to keep in mind. 
         *Evaluations can be viewed in the evaluations folder.*
-  - ^^All above evaluations are from P1. P3 Evals need to be addressed^^
 
 ## Iterations
 There have been three major versions of the system prompt. The initial prompt was created by an ai prompt that had onlyy a couple of sentences for inspiration.
@@ -58,7 +52,8 @@ For P3, prompts look different with the introduction of sub agents. This will al
 ## What's next
 
 - Allow follow-up questions (orchestrator decides whether to ask)
-- MCP for drills/knowledge-base search
+- Imporve Course context, consider hole specific suggestions. 
+- Allow for users to void certain inputs if they don't track that stat
 
 ## Tools used to build it
 - Lovable (for website building)
@@ -93,6 +88,22 @@ implement the agentic pipeline structure from @/Users/bengrob/GenerativeAiCourse
 **Result**
 Added agent scripts, informed me of innaccuracy in architecture document that was holding back all of my other instructions from creating a truly agentic pipeline. Was able to follow up and fix this.
 
+
+**Copilot Prompt**
+Create a plan for the agent to implement the folowing changes:
+
+Inform the user if their course is not able to found with a message that is outside the body of the main response. Also, implement changes to writing agents (course context, mental-game-analyzer, and practice plan generato) to not include course specific information when the course isn't found.
+
+**result**
+provided plan with overview, 8 steps, relevant files, and key decisions. The plan was then added to session context and wass implemented succesfully after next prompt. This added desired features of better handling missing course lookups.
+
+
+**Copilot Prompt**
+Make me a plan for migration to using an anthropic API. My orchestrator should use sonnet and the other agents should use haiku. Put logic in place for a daily cap but don't activate it yet.
+
+**result**
+"Migrate provider transport behind your existing agent call seam so orchestration behavior stays stable, route the orchestrator to Sonnet, route all specialist agents to Haiku, and add a daily cap system in monitor-only mode so it is implemented but not enforcing yet."
+^Above plan was then implemented and migration was successfull.
 
 
 ### P1 build log

@@ -78,7 +78,7 @@ const INITIAL_FORM: FormState = {
   response: "",
 };
 
-const DEV_TEST_PRESETS: Record<"solidRound" | "toughRound", FormState> = {
+const DEV_TEST_PRESETS: Record<"solidRound" | "toughRound" | "ironwoodRound", FormState> = {
   solidRound: {
     courseName: "Pebble Beach Golf Links",
     totalScore: "81",
@@ -94,7 +94,7 @@ const DEV_TEST_PRESETS: Record<"solidRound" | "toughRound", FormState> = {
     response: "I reset pretty well after misses but occasionally rushed the next shot.",
   },
   toughRound: {
-    courseName: "Augusta National Golf Club",
+    courseName: "Tyrone Hills",
     totalScore: "92",
     coursePar: "72",
     handicap: "12.4",
@@ -106,6 +106,20 @@ const DEV_TEST_PRESETS: Record<"solidRound" | "toughRound", FormState> = {
     pattern: "Push-slice with driver on tight holes and frequent three-putts after long first putts.",
     thoughts: "Mostly outcome thoughts like don't blow up and don't miss this one.",
     response: "After bad shots I got frustrated, sped up, and carried mistakes for several holes.",
+  },
+  ironwoodRound: {
+    courseName: "Ironwood",
+    totalScore: "95",
+    coursePar: "72",
+    handicap: "21",
+    fairwaysHit: "4",
+    fairwaysAvailable: "14",
+    greensInRegulation: "4",
+    totalPutts: "38",
+    score: "I feel like the score was a fair reflection, not my worst day, not my best.",
+    pattern: "Objectively bad shots with poor contact, was either topped or chunked.",
+    thoughts: "Take a shallow backswing with a good turn.",
+    response: "I got upset about my shot and wanted to fix my swing.",
   },
 };
 
@@ -381,7 +395,7 @@ function Index() {
             </button>
 
             {ENABLE_TEST_PREFILL && (
-              <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+              <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
                 <button
                   type="button"
                   onClick={() => applyTestPreset("solidRound")}
@@ -395,6 +409,13 @@ function Index() {
                   className="rounded-xl border border-border bg-card px-4 py-3 text-sm font-semibold text-foreground transition hover:bg-secondary"
                 >
                   Prefill: Tough Round
+                </button>
+                <button
+                  type="button"
+                  onClick={() => applyTestPreset("ironwoodRound")}
+                  className="rounded-xl border border-border bg-card px-4 py-3 text-sm font-semibold text-foreground transition hover:bg-secondary"
+                >
+                  Prefill: Ironwood Round
                 </button>
               </div>
             )}
